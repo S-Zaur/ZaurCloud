@@ -1,0 +1,58 @@
+{% extends "registration/auth_base.html" %}
+{% block title %}Login{% endblock %}
+{% block content %}
+    <h1 class="main-heading">Login</h1>
+    {% if form.errors %}
+        <p style="text-align: center">Your username and password didn't match. Please try again.</p>
+    {% endif %}
+
+    {% if next %}
+        {% if user.is_authenticated %}
+            <p style="text-align: center">Your account doesn't have access to this page. To proceed,
+                please login with an account that has access.</p>
+        {% else %}
+            <p style="text-align: center">Please login to see this page.</p>
+        {% endif %}
+    {% endif %}
+    <form method="POST" action="{% url 'login' %}">
+        {% csrf_token %}
+        <div class="row mb-3">
+            <label for="id_username" class="col-md-4 col-form-label text-md-end">Login</label>
+            <div class="col-md-6">
+                <input id="id_username" type="text" class="form-control " name="username" value="" required
+                       autocomplete="username" autofocus>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <label for="id_password" class="col-md-4 col-form-label text-md-end">Password</label>
+            <div class="col-md-6">
+                <input id="id_password" type="password" class="form-control " name="password" required
+                       autocomplete="current-password">
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-4 offset-md-4">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" name="remember" id="remember">
+                    <label class="form-check-label" for="remember">
+                        Remember Me
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-0 mt-4">
+            <div class="col-md-8 offset-md-3">
+                <button type="submit" class="btn btn-primary py-1 px-4 " value="login">
+                    Login
+                </button>
+
+                <a class="text-decoration-none ps-4" href="{% url 'password_reset' %}">
+                    Forgot Your Password?
+                </a>
+            </div>
+        </div>
+    </form>
+{% endblock %}

@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-5jxhh((7f&!ug4=)&zcw-ermj=9ht+$#+bu0#+d!_x#9vpne)f
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1','192.168.145.85']
+ALLOWED_HOSTS = ['127.0.0.1', '192.168.145.85']
 
 
 # Application definition
@@ -54,7 +54,9 @@ ROOT_URLCONF = 'ZaurCloud.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -116,6 +118,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field

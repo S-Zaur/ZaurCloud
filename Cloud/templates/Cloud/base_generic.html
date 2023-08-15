@@ -4,10 +4,12 @@
     <title>{% block title %}Zaur Cloud{% endblock %}</title>
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'styles/bootstrap.min.css' %}">
+    <script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
 </head>
 
 <body>
 {% include "Cloud/nav.html" %}
 {% block content %}{% endblock %}
+{% include "Cloud/right_click_menu.html" %}
 </body>
 </html>

@@ -1,7 +1,12 @@
+from django.conf import settings
 from django.shortcuts import render
+import os
 
-from django.contrib.auth.decorators import login_required
+from Cloud.utils import get_files_and_dirs, check_permissions
 
-@login_required(login_url='/accounts/login/')
-def index(request):
-    return render(request, 'Cloud/index.html')
+
+@check_permissions
+def open_dir(request, path=""):
+    file_path = os.path.normpath(os.path.join(settings.STORAGE_DIRECTORY, path))
+    objects = get_files_and_dirs(file_path)
+    return render(request, 'Cloud/cloud.html', context={"objects": objects, "current": os.path.split(path)[-1]})

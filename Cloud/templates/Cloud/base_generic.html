@@ -1,7 +1,9 @@
 <!doctype html>
 <html lang="en">
 <head>
-    {% block title %}<title>Zaur Cloud</title>{% endblock %}
+    <title>{% block title %}Zaur Cloud{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'styles/bootstrap.min.css' %}">
 </head>
 
 <body>

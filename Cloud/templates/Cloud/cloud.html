@@ -1,0 +1,21 @@
+{% extends "Cloud/base_generic.html" %}
+{% block title %}{{ current|default:"ZaurCloud" }}{% endblock %}
+{% block content %}
+    {% load static %}
+    <div class="container">
+        <div id="grid" class="grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6">
+            {% for object in objects %}
+                <div class="col">
+                    <div class="card" data-bs-num="0" data-bs-toggle="modal" data-bs-target="#exampleModal"
+                         onclick="window.location='{{ object.get_absolute_url }}';">
+                        <img src="{% static object.get_icon %}"
+                             class="card-img-top img-fluid img-thumbnail" alt="object">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ object.name }}</h5>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

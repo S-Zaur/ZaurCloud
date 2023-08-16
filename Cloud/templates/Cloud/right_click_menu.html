@@ -1,6 +1,6 @@
 {% load static %}
 <div id="menu">
-    <a href="javascript:void(0)" onclick="window.location = get_download_url();">
+    <a href="javascript:void(0)" onclick="window.location = get_url('download');">
         <img src="{% static 'Cloud/images/menu_icons/download.png' %}" alt="download"/> Скачать
     </a>
     <a href="#">
@@ -26,12 +26,14 @@
 <link rel="stylesheet" type="text/css" href="{% static 'Cloud/styles/menu.css' %}">
 <script type="text/javascript" src="{% static 'Cloud/js/menu.js' %}"></script>
 <script>
-    function get_download_url() {
+    function get_url(action) {
         if (currentElem == null)
-            return;
-        let link = currentElem.firstElementChild.attributes.onclick.value
-        if (link == null)
-            alert("Error")
-        return "{% url 'download' path="123"%}".replace("123", link.substring(24, link.length - 2));
+            return "#";
+        let link = currentElem.firstElementChild.attributes.onclick.value;
+        if (link == null) {
+            alert("Error");
+            return "#";
+        }
+        return "{% url 'download' path="123"%}".replace("download", action).replace("123", link.substring(24, link.length - 2));
     }
 </script>

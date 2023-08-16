@@ -1,5 +1,6 @@
 let i = document.getElementById("menu");
 let containers = document.getElementsByClassName("container")
+let currentElem = null;
 
 document.addEventListener('contextmenu', function (e) {
     if (e.target.closest(".container") != null) return;
@@ -15,6 +16,11 @@ Array.prototype.forEach.call(containers, function (container) {
         const posX = e.clientX;
         const posY = e.clientY;
         open_menu(posX, posY);
+
+        let target = e.target.closest('.col');
+        if (!target) return;
+        currentElem = target;
+
         e.preventDefault();
     }, false);
     container.addEventListener('click', function (e) {

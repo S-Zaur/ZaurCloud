@@ -11,6 +11,8 @@ from Cloud.utils import get_files_and_dirs, check_permissions
 @check_permissions
 def open_dir(request, path=""):
     file_path = os.path.normpath(os.path.join(settings.STORAGE_DIRECTORY, path))
+    if os.path.isfile(file_path):
+        raise SuspiciousOperation("Cannot open files")
     objects = get_files_and_dirs(file_path)
     return render(request, 'Cloud/cloud.html', context={"objects": objects, "current": os.path.split(path)[-1]})
 

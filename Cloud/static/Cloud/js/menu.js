@@ -1,36 +1,41 @@
-var i = document.getElementById("menu").style;
-if (document.addEventListener) {
-    document.addEventListener('contextmenu', function (e) {
-        var posX = e.clientX;
-        var posY = e.clientY;
-        menu(posX, posY);
+let i = document.getElementById("menu");
+let containers = document.getElementsByClassName("container")
+
+document.addEventListener('contextmenu', function (e) {
+    if (e.target.closest(".container") != null) return;
+    close_menu();
+}, false);
+document.addEventListener('click', function (e) {
+    if (e.target.closest(".container") != null) return;
+    close_menu();
+}, false);
+Array.prototype.forEach.call(containers, function (container) {
+    container.addEventListener('contextmenu', function (e) {
+        if (e.target.closest(".container") == null) return;
+        const posX = e.clientX;
+        const posY = e.clientY;
+        open_menu(posX, posY);
         e.preventDefault();
     }, false);
-    document.addEventListener('click', function (e) {
-        i.opacity = "0";
-        setTimeout(function () {
-            i.visibility = "hidden";
-        }, 501);
+    container.addEventListener('click', function (e) {
+        close_menu()
     }, false);
-} else {
-    document.attachEvent('oncontextmenu', function (e) {
-        var posX = e.clientX;
-        var posY = e.clientY;
-        menu(posX, posY);
-        e.preventDefault();
-    });
-    document.attachEvent('onclick', function (e) {
-        i.opacity = "0";
-        setTimeout(function () {
-            i.visibility = "hidden";
-        }, 501);
-    });
+})
+
+function open_menu(x, y) {
+    if (y + i.offsetHeight > document.documentElement.clientHeight)
+        y -= i.offsetHeight;
+    if (x + i.offsetWidth > document.documentElement.clientWidth)
+        x -= i.offsetWidth;
+    i.style.top = y + "px";
+    i.style.left = x + "px";
+    i.style.visibility = "visible";
+    i.style.opacity = "1";
 }
 
-function menu(x, y) {
-    i.top = y + "px";
-    i.left = x + "px";
-    i.visibility = "visible";
-    i.opacity = "1";
+function close_menu() {
+    i.style.opacity = "0";
+    setTimeout(function () {
+        i.style.visibility = "hidden";
+    }, 501);
 }
-

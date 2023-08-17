@@ -18,7 +18,7 @@
     border: 1px solid #C6C6C6;
 }
 
-#menu a {
+#menu form {
     display: block;
     color: #555;
     text-decoration: none;
@@ -27,8 +27,8 @@
     position: relative;
 }
 
-#menu a img,
-#menu a i.fa {
+#menu form img,
+#menu form i.fa {
     height: 20px;
     font-size: 17px;
     width: 20px;
@@ -37,14 +37,23 @@
     top: 2px;
 }
 
-#menu a span {
+#menu form span {
     color: #BCB1B3;
     float: right;
 }
 
-#menu a:hover {
+#menu form:hover {
     color: #fff;
     background: #3879D9;
+}
+
+input {
+    border: 0;
+    outline: 0;
+    background-color: transparent;
+    color: #555;
+    font-family: sans-serif;
+    font-size: 11px;
 }
 
 #menu hr {

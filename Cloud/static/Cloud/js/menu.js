@@ -21,6 +21,15 @@ Array.prototype.forEach.call(containers, function (container) {
         if (!target) return;
         currentElem = target;
 
+        let link = currentElem.firstElementChild.attributes.onclick.value;
+        if (link == null) {
+            alert("Error");
+        }
+
+        let urls = document.getElementsByClassName("form_url")
+        Array.prototype.forEach.call(urls, function (url_input) {
+            url_input.value = link.substring(24, link.length - 2);
+        });
         e.preventDefault();
     }, false);
     container.addEventListener('click', function (e) {

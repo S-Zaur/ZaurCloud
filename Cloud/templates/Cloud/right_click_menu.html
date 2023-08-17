@@ -1,39 +1,56 @@
 {% load static %}
 <div id="menu">
-    <a href="javascript:void(0)" onclick="window.location = get_url('download');">
-        <img src="{% static 'Cloud/images/menu_icons/download.png' %}" alt="download"/> Скачать
-    </a>
-    <a href="#">
-        <img src="{% static 'Cloud/images/menu_icons/copy.png' %}" alt="copy"/> Копировать
-    </a>
-    <a href="#">
-        <img src="{% static 'Cloud/images/menu_icons/cut.png' %}" alt="cut"/> Вырезать
-    </a>
-    <a href="#">
-        <img src="{% static 'Cloud/images/menu_icons/paste.png' %}" alt="paste"/> Вставить
-    </a>
-    <a href="#">
-        <img src="{% static 'Cloud/images/menu_icons/delete.png' %}" alt="delete"/> Удалить
-    </a>
-    <a href="#">
-        <img src="{% static 'Cloud/images/menu_icons/rename.png' %}#" alt="rename"/> Переименовать
-    </a>
-    <a href="#">
-        <img src="{% static 'Cloud/images/menu_icons/about.png' %}#" alt="about"/> Свойства
-    </a>
+    <form method="get">
+        {% csrf_token %}
+        <img src="{% static 'Cloud/images/menu_icons/download.png' %}" alt="download"/>
+        <input type="hidden" name="url" value="" class="form_url">
+        <input id="action_id" type="hidden" name="action" value="Download">
+        <input type="submit" value="Скачать"/>
+    </form>
+    <form method="post">
+        {% csrf_token %}
+        <img src="{% static 'Cloud/images/menu_icons/copy.png' %}" alt="copy"/>
+        <input type="hidden" name="url" value="" class="form_url">
+        <input id="action_id" type="hidden" name="action" value="Copy">
+        <input type="submit" value="Копировать"/>
+    </form>
+    <form method="post">
+        {% csrf_token %}
+        <img src="{% static 'Cloud/images/menu_icons/cut.png' %}" alt="cut"/>
+        <input type="hidden" name="url" value="" class="form_url">
+        <input id="action_id" type="hidden" name="action" value="Cut">
+        <input type="submit" value="Вырезать"/>
+    </form>
+    <form method="post">
+        {% csrf_token %}
+        <img src="{% static 'Cloud/images/menu_icons/paste.png' %}" alt="paste"/>
+        <input type="hidden" name="url" value="" class="form_url">
+        <input id="action_id" type="hidden" name="action" value="Paste">
+        <input type="submit" value="Вставить"/>
+    </form>
+    <form method="post">
+        {% csrf_token %}
+        <img src="{% static 'Cloud/images/menu_icons/delete.png' %}" alt="delete"/>
+        <input type="hidden" name="url" value="" class="form_url">
+        <input id="action_id" type="hidden" name="action" value="Delete">
+        <input type="submit" value="Удалить"/>
+    </form>
+    <form method="post">
+        {% csrf_token %}
+        <img src="{% static 'Cloud/images/menu_icons/rename.png' %}" alt="rename"/>
+        <input type="hidden" name="url" value="" class="form_url">
+        <input id="new_name" type="hidden" name="new_name" value="">
+        <input id="action_id" type="hidden" name="action" value="Rename">
+        <input type="submit" value="Переименовать"/>
+    </form>
+    <form method="get">
+        {% csrf_token %}
+        <img src="{% static 'Cloud/images/menu_icons/about.png' %}" alt="about"/>
+        <input type="hidden" name="url" value="" class="form_url">
+        <input id="action_id" type="hidden" name="action" value="About">
+        <input type="submit" value="Свойства"/>
+    </form>
 </div>
 {% load static %}
 <link rel="stylesheet" type="text/css" href="{% static 'Cloud/styles/menu.css' %}">
 <script type="text/javascript" src="{% static 'Cloud/js/menu.js' %}"></script>
-<script>
-    function get_url(action) {
-        if (currentElem == null)
-            return "#";
-        let link = currentElem.firstElementChild.attributes.onclick.value;
-        if (link == null) {
-            alert("Error");
-            return "#";
-        }
-        return "{% url 'download' path="123"%}".replace("download", action).replace("123", link.substring(24, link.length - 2));
-    }
-</script>

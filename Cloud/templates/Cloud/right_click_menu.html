@@ -2,53 +2,67 @@
 <div id="menu">
     <form method="get">
         {% csrf_token %}
-        <img src="{% static 'Cloud/images/menu_icons/download.png' %}" alt="download"/>
+        <label for="download_submit">
+            <img src="{% static 'Cloud/images/menu_icons/download.png' %}" alt="download"/>
+        </label>
         <input type="hidden" name="url" value="" class="form_url">
         <input id="action_id" type="hidden" name="action" value="Download">
-        <input type="submit" value="Скачать"/>
+        <input id="download_submit" type="submit" value="Скачать"/>
     </form>
     <form method="post">
         {% csrf_token %}
-        <img src="{% static 'Cloud/images/menu_icons/copy.png' %}" alt="copy"/>
+        <label for="copy_submit">
+            <img src="{% static 'Cloud/images/menu_icons/copy.png' %}" alt="copy"/>
+        </label>
         <input type="hidden" name="url" value="" class="form_url">
         <input id="action_id" type="hidden" name="action" value="Copy">
-        <input type="submit" value="Копировать"/>
+        <input id="copy_submit" type="submit" value="Копировать"/>
     </form>
     <form method="post">
         {% csrf_token %}
-        <img src="{% static 'Cloud/images/menu_icons/cut.png' %}" alt="cut"/>
+        <label for="cut_submit">
+            <img src="{% static 'Cloud/images/menu_icons/cut.png' %}" alt="cut"/>
+        </label>
         <input type="hidden" name="url" value="" class="form_url">
         <input id="action_id" type="hidden" name="action" value="Cut">
-        <input type="submit" value="Вырезать"/>
+        <input id="cut_submit" type="submit" value="Вырезать"/>
     </form>
     <form method="post">
         {% csrf_token %}
-        <img src="{% static 'Cloud/images/menu_icons/paste.png' %}" alt="paste"/>
+        <label for="paste_submit">
+            <img src="{% static 'Cloud/images/menu_icons/paste.png' %}" alt="paste"/>
+        </label>
         <input type="hidden" name="url" value="" class="form_url">
         <input id="action_id" type="hidden" name="action" value="Paste">
-        <input type="submit" value="Вставить"/>
+        <input id="paste_submit" type="submit" value="Вставить"/>
     </form>
     <form method="post">
         {% csrf_token %}
-        <img src="{% static 'Cloud/images/menu_icons/delete.png' %}" alt="delete"/>
+        <label for="delete_submit">
+            <img src="{% static 'Cloud/images/menu_icons/delete.png' %}" alt="delete"/>
+        </label>
         <input type="hidden" name="url" value="" class="form_url">
         <input id="action_id" type="hidden" name="action" value="Delete">
-        <input type="submit" value="Удалить"/>
+        <input id="delete_submit" type="submit" value="Удалить"/>
     </form>
     <form method="post">
         {% csrf_token %}
-        <img src="{% static 'Cloud/images/menu_icons/rename.png' %}" alt="rename"/>
+        <label for="rename_submit">
+            <img src="{% static 'Cloud/images/menu_icons/rename.png' %}" alt="rename"/>
+        </label>
         <input type="hidden" name="url" value="" class="form_url">
         <input id="new_name" type="hidden" name="new_name" value="">
         <input id="action_id" type="hidden" name="action" value="Rename">
-        <input type="submit" value="Переименовать"/>
+        <input id="rename_submit" type="submit" value="Переименовать"/>
     </form>
     <form method="get">
         {% csrf_token %}
-        <img src="{% static 'Cloud/images/menu_icons/about.png' %}" alt="about"/>
+        <label for="about_submit">
+            <img src="{% static 'Cloud/images/menu_icons/about.png' %}" alt="about"/>
+        </label>
         <input type="hidden" name="url" value="" class="form_url">
         <input id="action_id" type="hidden" name="action" value="About">
-        <input type="submit" value="Свойства"/>
+        <input id="about_submit" type="submit" value="Свойства"/>
     </form>
 </div>
 {% load static %}

@@ -27,14 +27,19 @@
     position: relative;
 }
 
-#menu form img,
-#menu form i.fa {
+#menu form label {
     height: 20px;
     font-size: 17px;
     width: 20px;
     position: absolute;
     left: 5px;
     top: 2px;
+}
+
+#menu form label img {
+    height: 20px;
+    width: 20px;
+    cursor: pointer;
 }
 
 #menu form span {
@@ -54,6 +59,8 @@ input {
     color: #555;
     font-family: sans-serif;
     font-size: 11px;
+    width: 100%;
+    text-align: left;
 }
 
 #menu hr {

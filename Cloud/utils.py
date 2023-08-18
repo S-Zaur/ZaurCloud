@@ -37,10 +37,10 @@ def check_permissions(func):
 
 
 def check_exists(func):
-    def wrapper(path):
+    def wrapper(path, *args):
         file_path = os.path.normpath(os.path.join(settings.STORAGE_DIRECTORY, path))
         if not os.path.exists(file_path):
             raise Http404
-        return func(file_path)
+        return func(file_path, *args)
 
     return wrapper

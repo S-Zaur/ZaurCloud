@@ -1,7 +1,14 @@
 let i = document.getElementById("menu");
-let container = document.getElementById("main_container")
 let currentElem = null;
-
+const STATUS_CODES = {
+    403: function () {
+        toast("Запрещено");
+    }, 404: function () {
+        toast("Не найдено");
+    }, 500: function () {
+        toast("Ошибка");
+    }
+}
 document.addEventListener('contextmenu', function (e) {
     if (e.target.closest(".container") != null) return;
     close_menu();
@@ -10,7 +17,7 @@ document.addEventListener('click', function (e) {
     if (e.target.closest(".container") != null) return;
     close_menu();
 }, false);
-container.addEventListener('contextmenu', function (e) {
+document.getElementById("main_container").addEventListener('contextmenu', function (e) {
     if (e.target.closest(".container") == null) return;
     e.preventDefault();
 
@@ -35,17 +42,26 @@ container.addEventListener('contextmenu', function (e) {
     const posY = e.clientY;
     open_menu(posX, posY);
 }, false);
-container.addEventListener('click', function (e) {
+document.getElementById("main_container").addEventListener('click', function (e) {
     close_menu()
 }, false);
 
 document.getElementById("delete_form").addEventListener("submit", deleteSubmitHandler);
+document.getElementById("rename").addEventListener("submit", function (e) {
+    e.preventDefault();
+    $("#new_name").val($(currentElem).find(".card-title").text())
+    $("#renameModal").modal('show');
+});
+document.getElementById("rename_form").onkeydown = function (e) {
+    if (e.key === "Enter") {
+        renameSubmitHandler(e);
+    }
+};
+document.getElementById("rename_form_submit").addEventListener("click", renameSubmitHandler);
 
 function open_menu(x, y) {
-    if (y + i.offsetHeight > document.documentElement.clientHeight)
-        y -= i.offsetHeight;
-    if (x + i.offsetWidth > document.documentElement.clientWidth)
-        x -= i.offsetWidth;
+    if (y + i.offsetHeight > document.documentElement.clientHeight) y -= i.offsetHeight;
+    if (x + i.offsetWidth > document.documentElement.clientWidth) x -= i.offsetWidth;
     i.style.top = y + "px";
     i.style.left = x + "px";
     i.style.visibility = "visible";
@@ -72,17 +88,27 @@ function deleteSubmitHandler(e) {
                 currentElem.remove();
             }
         },
-        statusCode: {
-            403: function () {
-                toast("Запрещено");
-            },
-            404: function () {
-                toast("Не найдено");
-            },
-            500: function () {
-                toast("Ошибка");
+        statusCode: STATUS_CODES,
+    });
+}
+
+function renameSubmitHandler(e) {
+    e.preventDefault();
+    $("#renameModal").modal('hide');
+    const title = $(currentElem).find(".card-title")
+    const name = $("#new_name").val()
+    if (title.text() === name) return;
+    $.ajax({
+        type: "POST",
+        url: window.location.href,
+        data: $("#rename_form").serialize(),
+        dataType: "json",
+        success: function (data) {
+            if (data.result === "ok") {
+                title.text(name);
             }
         },
+        statusCode: STATUS_CODES,
     });
 }
 

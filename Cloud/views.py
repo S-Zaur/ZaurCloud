@@ -21,6 +21,8 @@ def open_dir(request, path=""):
         file_path = urllib.parse.unquote(request.POST["url"])
         if action == "Delete":
             return delete(file_path)
+        if action == "Rename":
+            return rename(file_path, request.POST["new_name"])
         raise SuspiciousOperation
 
     if "action" in request.GET:
@@ -57,3 +59,10 @@ def delete(path):
     else:
         shutil.rmtree(path)
     return JsonResponse({"result": "deleted"})
+
+
+@check_exists
+def rename(path, name):
+    name = os.path.join(os.path.split(path)[0], name)
+    os.rename(path, name)
+    return JsonResponse({"result": "ok"})

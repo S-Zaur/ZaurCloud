@@ -54,3 +54,30 @@ function close_menu() {
         i.style.visibility = "hidden";
     }, 501);
 }
+
+function deleteSubmitHandler(e) {
+    e.preventDefault();
+    $.ajax({
+        type: "POST",
+        url: window.location.href,
+        data: $("#delete_form").serialize(),
+        dataType: "json",
+        success: function (data) {
+            if (data.result === "deleted") {
+                toast("Удалено");
+                currentElem.remove();
+            }
+        },
+        statusCode: {
+            403: function () {
+                toast("Запрещено");
+            },
+            404: function () {
+                toast("Не найдено");
+            },
+            500: function () {
+                toast("Ошибка");
+            }
+        },
+    });
+}

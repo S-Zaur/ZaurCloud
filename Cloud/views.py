@@ -3,10 +3,9 @@ import shutil
 import mimetypes
 import urllib.parse
 
-from django.urls import reverse
 from django.conf import settings
-from django.http import HttpResponse
-from django.shortcuts import render, redirect
+from django.shortcuts import render
+from django.http import HttpResponse, JsonResponse
 from django.core.exceptions import SuspiciousOperation, PermissionDenied
 
 from Cloud.utils import get_files_and_dirs, check_permissions
@@ -16,10 +15,21 @@ from Cloud.utils import get_files_and_dirs, check_permissions
 def open_dir(request, path=""):
     file_path = os.path.normpath(os.path.join(settings.STORAGE_DIRECTORY, path))
     if request.method == "POST":
+        if "action" not in request.POST:
+            raise SuspiciousOperation
+        action = request.POST["action"]
+        file_path = urllib.parse.unquote(request.POST["url"])
+        if action == "Delete":
+            return delete(file_path)
         raise SuspiciousOperation
-    if "action" in request.GET and request.GET["action"] == "Download":
+
+    if "action" in request.GET:
+        action = request.GET["action"]
         file_path = urllib.parse.unquote(request.GET["url"])
-        return download(file_path)
+        if action == "Download":
+            return download(file_path)
+        raise SuspiciousOperation
+
     if os.path.isfile(file_path):
         raise SuspiciousOperation("Cannot open files")
     objects = get_files_and_dirs(file_path)
@@ -36,3 +46,14 @@ def download(path):
         response['Content-Length'] = os.path.getsize(file_path)
         response['Content-Disposition'] = "attachment; filename=%s" % os.path.split(file_path)[-1]
         return response
+
+
+def delete(path):
+    file_path = os.path.normpath(os.path.join(settings.STORAGE_DIRECTORY, path))
+    if settings.DEBUG:
+        raise PermissionDenied("to remove it, set DEBUG=False")
+    if os.path.isfile(file_path):
+        os.remove(file_path)
+    else:
+        shutil.rmtree(file_path)
+    return JsonResponse({"result": "deleted"})

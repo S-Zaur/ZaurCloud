@@ -52,7 +52,7 @@
     background: #3879D9;
 }
 
-input {
+#menu form input {
     border: 0;
     outline: 0;
     background-color: transparent;

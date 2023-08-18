@@ -36,7 +36,7 @@
         <input id="action_id" type="hidden" name="action" value="Paste">
         <input id="paste_submit" type="submit" value="Вставить"/>
     </form>
-    <form method="post">
+    <form method="post" id="delete_form">
         {% csrf_token %}
         <label for="delete_submit">
             <img src="{% static 'Cloud/images/menu_icons/delete.png' %}" alt="delete"/>
@@ -65,6 +65,10 @@
         <input id="about_submit" type="submit" value="Свойства"/>
     </form>
 </div>
+{% include "Cloud/toast.html" %}
 {% load static %}
 <link rel="stylesheet" type="text/css" href="{% static 'Cloud/styles/menu.css' %}">
 <script type="text/javascript" src="{% static 'Cloud/js/menu.js' %}"></script>
+<script>
+    document.getElementById("delete_form").addEventListener("submit", deleteSubmitHandler);
+</script>

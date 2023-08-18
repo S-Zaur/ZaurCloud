@@ -45,6 +45,11 @@ class CloudObject:
         from django.urls import reverse
         return reverse('open_dir', args=[self.path])
 
+    def get_rel_url(self):
+        from django.urls import reverse
+        path = reverse('open_dir', args=[self.path])
+        return path[path.find('/',1):]
+
     def get_icon(self):
         if not self.IS_FILE:
             return 'Cloud/images/folder.png'

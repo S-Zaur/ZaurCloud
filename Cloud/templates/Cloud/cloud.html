@@ -6,7 +6,7 @@
         <div id="grid" class="grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6">
             {% for object in objects %}
                 <div class="col d-flex align-items-stretch mb-3">
-                    <div class="card"
+                    <div class="card" data-url="{{ object.get_rel_url }}"
                             {% if not object.IS_FILE %}
                          onclick="window.location='{{ object.get_absolute_url }}';"
                             {% endif %}>

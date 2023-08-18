@@ -35,6 +35,7 @@ def open_dir(request, path=""):
     objects = get_files_and_dirs(file_path)
     return render(request, 'Cloud/cloud.html', context={"objects": objects, "current": os.path.split(path)[-1]})
 
+
 @check_exists
 def download(path):
     if os.path.isdir(path):
@@ -45,6 +46,7 @@ def download(path):
         response['Content-Length'] = os.path.getsize(path)
         response['Content-Disposition'] = "attachment; filename=%s" % os.path.split(path)[-1]
         return response
+
 
 @check_exists
 def delete(path):

@@ -21,14 +21,14 @@ container.addEventListener('contextmenu', function (e) {
     }
     currentElem = target;
 
-    let link = currentElem.firstElementChild.attributes.onclick.value;
+    let link = currentElem.firstElementChild.dataset.url;
     if (link == null) {
         toast("Error")
         return;
     }
     let urls = document.getElementsByClassName("form_url")
     Array.prototype.forEach.call(urls, function (url_input) {
-        url_input.value = link.substring(24, link.length - 2);
+        url_input.value = link;
     });
 
     const posX = e.clientX;

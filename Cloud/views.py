@@ -8,7 +8,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.core.exceptions import SuspiciousOperation, PermissionDenied
 
-from Cloud.utils import get_files_and_dirs, check_permissions
+from Cloud.utils import get_files_and_dirs, check_permissions, check_exists
 
 
 @check_permissions
@@ -35,25 +35,23 @@ def open_dir(request, path=""):
     objects = get_files_and_dirs(file_path)
     return render(request, 'Cloud/cloud.html', context={"objects": objects, "current": os.path.split(path)[-1]})
 
-
+@check_exists
 def download(path):
-    file_path = os.path.normpath(os.path.join(settings.STORAGE_DIRECTORY, path))
-    if os.path.isdir(file_path):
+    if os.path.isdir(path):
         raise SuspiciousOperation("Cannot download folder")
-    with open(file_path, 'rb') as file:
-        mime_type, _ = mimetypes.guess_type(file_path)
+    with open(path, 'rb') as file:
+        mime_type, _ = mimetypes.guess_type(path)
         response = HttpResponse(file, content_type=mime_type)
-        response['Content-Length'] = os.path.getsize(file_path)
-        response['Content-Disposition'] = "attachment; filename=%s" % os.path.split(file_path)[-1]
+        response['Content-Length'] = os.path.getsize(path)
+        response['Content-Disposition'] = "attachment; filename=%s" % os.path.split(path)[-1]
         return response
 
-
+@check_exists
 def delete(path):
-    file_path = os.path.normpath(os.path.join(settings.STORAGE_DIRECTORY, path))
     if settings.DEBUG:
         raise PermissionDenied("to remove it, set DEBUG=False")
-    if os.path.isfile(file_path):
-        os.remove(file_path)
+    if os.path.isfile(path):
+        os.remove(path)
     else:
-        shutil.rmtree(file_path)
+        shutil.rmtree(path)
     return JsonResponse({"result": "deleted"})

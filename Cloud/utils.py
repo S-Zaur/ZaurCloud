@@ -26,11 +26,21 @@ def check_permissions(func):
         file_path = os.path.normpath(os.path.join(settings.STORAGE_DIRECTORY, path))
         if not request.user.is_authenticated:
             return redirect(reverse('login') + '?next=' + reverse('open_dir', args=[path])) \
-                if path!="" else redirect(reverse('login') + '?next=' + reverse('index'))
+                if path != "" else redirect(reverse('login') + '?next=' + reverse('index'))
         if not os.path.exists(file_path):
             raise Http404
         if settings.STORAGE_DIRECTORY not in file_path:
             raise PermissionDenied
         return func(request, **kwargs)
+
+    return wrapper
+
+
+def check_exists(func):
+    def wrapper(path):
+        file_path = os.path.normpath(os.path.join(settings.STORAGE_DIRECTORY, path))
+        if not os.path.exists(file_path):
+            raise Http404
+        return func(file_path)
 
     return wrapper

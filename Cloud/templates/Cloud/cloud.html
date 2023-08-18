@@ -7,7 +7,9 @@
             {% for object in objects %}
                 <div class="col d-flex align-items-stretch mb-3">
                     <div class="card"
-                         onclick="window.location='{{ object.get_absolute_url }}';">
+                            {% if not object.IS_FILE %}
+                         onclick="window.location='{{ object.get_absolute_url }}';"
+                            {% endif %}>
                         <img src="{% static object.get_icon %}"
                              class="card-img-top img-fluid img-thumbnail" alt="object">
                         <div class="card-body">

@@ -1,5 +1,5 @@
 let i = document.getElementById("menu");
-let containers = document.getElementsByClassName("container")
+let container = document.getElementById("main_container")
 let currentElem = null;
 
 document.addEventListener('contextmenu', function (e) {
@@ -10,32 +10,36 @@ document.addEventListener('click', function (e) {
     if (e.target.closest(".container") != null) return;
     close_menu();
 }, false);
-Array.prototype.forEach.call(containers, function (container) {
-    container.addEventListener('contextmenu', function (e) {
-        if (e.target.closest(".container") == null) return;
-        const posX = e.clientX;
-        const posY = e.clientY;
-        open_menu(posX, posY);
+container.addEventListener('contextmenu', function (e) {
+    if (e.target.closest(".container") == null) return;
+    e.preventDefault();
 
-        let target = e.target.closest('.col');
-        if (!target) return;
-        currentElem = target;
+    let target = e.target.closest('.col');
+    if (target == null) {
+        toast("Error")
+        return;
+    }
+    currentElem = target;
 
-        let link = currentElem.firstElementChild.attributes.onclick.value;
-        if (link == null) {
-            alert("Error");
-        }
+    let link = currentElem.firstElementChild.attributes.onclick.value;
+    if (link == null) {
+        toast("Error")
+        return;
+    }
+    let urls = document.getElementsByClassName("form_url")
+    Array.prototype.forEach.call(urls, function (url_input) {
+        url_input.value = link.substring(24, link.length - 2);
+    });
 
-        let urls = document.getElementsByClassName("form_url")
-        Array.prototype.forEach.call(urls, function (url_input) {
-            url_input.value = link.substring(24, link.length - 2);
-        });
-        e.preventDefault();
-    }, false);
-    container.addEventListener('click', function (e) {
-        close_menu()
-    }, false);
-})
+    const posX = e.clientX;
+    const posY = e.clientY;
+    open_menu(posX, posY);
+}, false);
+container.addEventListener('click', function (e) {
+    close_menu()
+}, false);
+
+document.getElementById("delete_form").addEventListener("submit", deleteSubmitHandler);
 
 function open_menu(x, y) {
     if (y + i.offsetHeight > document.documentElement.clientHeight)
@@ -80,4 +84,9 @@ function deleteSubmitHandler(e) {
             }
         },
     });
+}
+
+function toast(text) {
+    $("#message_text").text(text);
+    $(".toast").toast('show');
 }

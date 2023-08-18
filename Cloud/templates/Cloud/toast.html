@@ -7,11 +7,3 @@
     <div class="toast-body" id="message_text">
     </div>
 </div>
-{% load static %}
-<script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
-<script>
-    function toast(text) {
-        $("#message_text").text(text);
-        $(".toast").toast('show');
-    }
-</script>

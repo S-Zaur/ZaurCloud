@@ -1,8 +1,17 @@
 let i = document.getElementById("menu");
 let currentElem = null;
 const STATUS_CODES = {
-    403: function () {
-        toast("Запрещено");
+    403: function (data) {
+        const res = JSON.parse(data.responseText)
+        if (!"result" in res) {
+            toast("Запрещено");
+        } else if (res.result === "Downloadable object too large") {
+            toast("Скачиваемая папка слишком большая");
+        } else if (res.result === "DEBUG") {
+            toast("Невозможно в режиме DEBUG");
+        } else {
+            toast("Запрещено");
+        }
     }, 404: function () {
         toast("Не найдено");
     }, 500: function () {
@@ -47,6 +56,7 @@ document.getElementById("main_container").addEventListener('click', function (e)
 }, false);
 
 document.getElementById("delete_form").addEventListener("submit", deleteSubmitHandler);
+document.getElementById("download_form").addEventListener("submit", downloadSubmitHandler);
 document.getElementById("rename").addEventListener("submit", function (e) {
     e.preventDefault();
     $("#new_name").val($(currentElem).find(".card-title").text())
@@ -83,10 +93,8 @@ function deleteSubmitHandler(e) {
         data: $("#delete_form").serialize(),
         dataType: "json",
         success: function (data) {
-            if (data.result === "deleted") {
-                toast("Удалено");
-                currentElem.remove();
-            }
+            toast("Удалено");
+            currentElem.remove();
         },
         statusCode: STATUS_CODES,
     });
@@ -108,6 +116,17 @@ function renameSubmitHandler(e) {
                 title.text(name);
             }
         },
+        statusCode: STATUS_CODES,
+    });
+}
+
+function downloadSubmitHandler(e) {
+    e.preventDefault();
+    $.ajax({
+        type: "GET",
+        url: window.location.href,
+        data: $("#download_form").serialize(),
+        dataType: "json",
         statusCode: STATUS_CODES,
     });
 }

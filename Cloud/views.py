@@ -1,14 +1,17 @@
 import os
+import uuid
 import shutil
+import zipfile
+import tempfile
 import mimetypes
 import urllib.parse
 
 from django.conf import settings
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
-from django.core.exceptions import SuspiciousOperation, PermissionDenied
+from django.core.exceptions import SuspiciousOperation
 
-from Cloud.utils import get_files_and_dirs, check_permissions, check_exists
+from Cloud.utils import get_files_and_dirs, check_permissions, check_exists, get_dir_size
 
 
 @check_permissions
@@ -41,7 +44,17 @@ def open_dir(request, path=""):
 @check_exists
 def download(path):
     if os.path.isdir(path):
-        raise SuspiciousOperation("Cannot download folder")
+        if get_dir_size(path) > 1e9:
+            return JsonResponse({"result": "Downloadable object too large"}, status=403)
+        zip_file_name = os.path.join(tempfile.gettempdir(), str(uuid.uuid4()) + ".zip")
+        with zipfile.ZipFile(zip_file_name, 'w') as zipObj:
+            for folderName, subFolders, filenames in os.walk(path):
+                for subFolder in subFolders:
+                    zipObj.mkdir(subFolder)
+                for filename in filenames:
+                    file_path = os.path.join(folderName, filename)
+                    zipObj.write(file_path, os.path.relpath(file_path, path))
+        return download(zip_file_name)
     with open(path, 'rb') as file:
         mime_type, _ = mimetypes.guess_type(path)
         response = HttpResponse(file, content_type=mime_type)
@@ -53,12 +66,12 @@ def download(path):
 @check_exists
 def delete(path):
     if settings.DEBUG:
-        raise PermissionDenied("to remove it, set DEBUG=False")
+        return JsonResponse({"result": "DEBUG"}, status=403)
     if os.path.isfile(path):
         os.remove(path)
     else:
         shutil.rmtree(path)
-    return JsonResponse({"result": "deleted"})
+    return JsonResponse({"result": "ok"})
 
 
 @check_exists

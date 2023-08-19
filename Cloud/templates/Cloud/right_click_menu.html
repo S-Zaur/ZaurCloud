@@ -1,6 +1,6 @@
 {% load static %}
 <div id="menu">
-    <form method="get">
+    <form method="get" id="download_form">
         {% csrf_token %}
         <label for="download_submit">
             <img src="{% static 'Cloud/images/menu_icons/download.png' %}" alt="download"/>

@@ -104,7 +104,8 @@ function deleteSubmitHandler(e) {
 function renameSubmitHandler(e) {
     e.preventDefault();
     $("#renameModal").modal('hide');
-    const title = $(currentElem).find(".card-title")
+    const current = $(currentElem)
+    const title = current.find(".card-title")
     const name = $("#new_name").val()
     if (title.text() === name) return;
     $.ajax({
@@ -115,6 +116,10 @@ function renameSubmitHandler(e) {
         success: function (data) {
             if (data.result === "ok") {
                 title.text(name);
+                current.removeAttr("onclick")
+                current.removeAttr("data-url")
+                current.find(".card").attr("onclick", "window.location='" + data.abs_url + "'")
+                current.find(".card").attr("data-url", data.rel_url)
             }
         },
         statusCode: STATUS_CODES,

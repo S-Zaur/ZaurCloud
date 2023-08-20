@@ -11,6 +11,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.core.exceptions import SuspiciousOperation
 
+from Cloud.models import CloudObject
 from Cloud.utils import get_files_and_dirs, check_permissions, check_exists, get_dir_size, get_properties
 
 
@@ -80,7 +81,12 @@ def delete(path):
 def rename(path, name):
     name = os.path.join(os.path.split(path)[0], name)
     os.rename(path, name)
-    return JsonResponse({"result": "ok"})
+    obj = CloudObject(name)
+    return JsonResponse({
+        "result": "ok",
+        "abs_url": obj.get_absolute_url(),
+        "rel_url": obj.get_rel_url()
+    })
 
 
 @check_exists

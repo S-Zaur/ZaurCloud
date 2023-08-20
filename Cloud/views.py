@@ -11,7 +11,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.core.exceptions import SuspiciousOperation
 
-from Cloud.utils import get_files_and_dirs, check_permissions, check_exists, get_dir_size
+from Cloud.utils import get_files_and_dirs, check_permissions, check_exists, get_dir_size, get_properties
 
 
 @check_permissions
@@ -33,6 +33,8 @@ def open_dir(request, path=""):
         file_path = urllib.parse.unquote(request.GET["url"])
         if action == "Download":
             return download(file_path)
+        if action == "Properties":
+            return properties(file_path)
         raise SuspiciousOperation
 
     if os.path.isfile(file_path):
@@ -79,3 +81,8 @@ def rename(path, name):
     name = os.path.join(os.path.split(path)[0], name)
     os.rename(path, name)
     return JsonResponse({"result": "ok"})
+
+
+@check_exists
+def properties(path):
+    return JsonResponse(get_properties(path))

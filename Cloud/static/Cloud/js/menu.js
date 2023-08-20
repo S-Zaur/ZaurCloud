@@ -57,6 +57,7 @@ document.getElementById("main_container").addEventListener('click', function (e)
 
 document.getElementById("delete_form").addEventListener("submit", deleteSubmitHandler);
 document.getElementById("download_form").addEventListener("submit", downloadSubmitHandler);
+document.getElementById("properties_form").addEventListener("submit", propertiesSubmitHandler);
 document.getElementById("rename").addEventListener("submit", function (e) {
     e.preventDefault();
     $("#new_name").val($(currentElem).find(".card-title").text())
@@ -127,6 +128,35 @@ function downloadSubmitHandler(e) {
         url: window.location.href,
         data: $("#download_form").serialize(),
         dataType: "json",
+        statusCode: STATUS_CODES,
+    });
+}
+
+function propertiesSubmitHandler(e) {
+    e.preventDefault();
+    $.ajax({
+        type: "GET",
+        url: window.location.href,
+        data: $("#properties_form").serialize(),
+        dataType: "json",
+        success: function (data) {
+            const table = $('#propertiesTable')
+            table.find('tbody').empty();
+            for (const [key, value] of Object.entries(data)) {
+                table.find('tbody')
+                    .append($('<tr>')
+                        .append($('<td>')
+                            .text(key
+                            )
+                        ).append($('<td>')
+                            .text(
+                                value
+                            )
+                        )
+                    );
+            }
+            $("#propertiesModal").modal('show');
+        },
         statusCode: STATUS_CODES,
     });
 }

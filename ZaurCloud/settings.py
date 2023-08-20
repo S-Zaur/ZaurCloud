@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
-
+import locale
 import os
 import platform
 
@@ -131,3 +131,5 @@ LOGIN_REDIRECT_URL = '/cloud'
 SYSTEM = platform.system()
 
 STORAGE_DIRECTORY = 'D:\\'
+
+locale.setlocale(locale.LC_ALL, "ru")

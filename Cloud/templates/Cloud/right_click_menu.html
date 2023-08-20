@@ -52,18 +52,19 @@
         </label>
         <input id="rename_submit" type="submit" value="Переименовать"/>
     </form>
-    <form method="get">
+    <form method="get" id="properties_form">
         {% csrf_token %}
-        <label for="about_submit">
+        <label for="properties_submit">
             <img src="{% static 'Cloud/images/menu_icons/about.png' %}" alt="about"/>
         </label>
         <input type="hidden" name="url" value="" class="form_url">
-        <input id="action_id" type="hidden" name="action" value="About">
-        <input id="about_submit" type="submit" value="Свойства"/>
+        <input id="action_id" type="hidden" name="action" value="Properties">
+        <input id="properties_submit" type="submit" value="Свойства"/>
     </form>
 </div>
 {% include "Cloud/toast.html" %}
 {% include "Cloud/rename_modal.html" %}
+{% include "Cloud/properties_modal.html" %}
 {% load static %}
 <link rel="stylesheet" type="text/css" href="{% static 'Cloud/styles/menu.css' %}">
 <script type="text/javascript" src="{% static 'Cloud/js/menu.js' %}"></script>

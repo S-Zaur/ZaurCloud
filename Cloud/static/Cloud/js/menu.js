@@ -58,6 +58,7 @@ document.getElementById("main_container").addEventListener('click', function (e)
 document.getElementById("delete_form").addEventListener("submit", deleteSubmitHandler);
 document.getElementById("download_form").addEventListener("submit", downloadSubmitHandler);
 document.getElementById("properties_form").addEventListener("submit", propertiesSubmitHandler);
+document.getElementById("create_directory_form").addEventListener("submit", createDirectorySubmitHandler);
 document.getElementById("rename").addEventListener("submit", function (e) {
     e.preventDefault();
     $("#new_name").val($(currentElem).find(".card-title").text())
@@ -161,6 +162,39 @@ function propertiesSubmitHandler(e) {
                     );
             }
             $("#propertiesModal").modal('show');
+        },
+        statusCode: STATUS_CODES,
+    });
+}
+
+function createDirectorySubmitHandler(e) {
+    e.preventDefault();
+    $.ajax({
+        type: "POST",
+        url: window.location.href,
+        data: $("#create_directory_form").serialize(),
+        dataType: "json",
+        success: function (data) {
+            $('#grid').append($('<div>')
+                .addClass("col d-flex align-items-stretch mb-3")
+                .append($('<div>')
+                    .addClass("card")
+                    .attr("data-url", data.rel_url)
+                    .attr("onclick", "window.location='" + data.abs_url + "'")
+                    .append($("<img>")
+                        .addClass("card-img-top img-fluid img-thumbnail")
+                        .attr("src", data.img)
+                        .attr("alt", "object")
+                    )
+                    .append($("<div>")
+                        .addClass("card-body")
+                        .append($("<h5>")
+                            .addClass("card-title")
+                            .text(data.name)
+                        )
+                    )
+                )
+            );
         },
         statusCode: STATUS_CODES,
     });

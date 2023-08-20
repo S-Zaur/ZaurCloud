@@ -27,6 +27,8 @@ def open_dir(request, path=""):
             return delete(file_path)
         if action == "Rename":
             return rename(file_path, request.POST["new_name"])
+        if action == "CreateDirectory":
+            return create_directory(file_path)
         raise SuspiciousOperation
 
     if "action" in request.GET:
@@ -92,3 +94,22 @@ def rename(path, name):
 @check_exists
 def properties(path):
     return JsonResponse(get_properties(path))
+
+
+def create_directory(path):
+    file_path = os.path.split(os.path.normpath(os.path.join(settings.STORAGE_DIRECTORY, path)))[0]
+    path = os.path.join(file_path, "Новая папка")
+    if os.path.exists(path):
+        i = 2
+        while os.path.exists(path):
+            path = os.path.join(file_path, f"Новая папка ({i})")
+            i += 1
+    os.mkdir(path)
+    obj = CloudObject(path)
+    return JsonResponse({
+        "result": "ok",
+        "name": obj.name,
+        "img": "/static/" + obj.get_icon(),
+        "rel_url": obj.get_rel_url(),
+        "abs_url": obj.get_absolute_url(),
+    })

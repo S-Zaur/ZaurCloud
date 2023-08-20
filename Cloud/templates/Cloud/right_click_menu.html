@@ -61,6 +61,15 @@
         <input id="action_id" type="hidden" name="action" value="Properties">
         <input id="properties_submit" type="submit" value="Свойства"/>
     </form>
+    <form method="post" id="create_directory_form">
+        {% csrf_token %}
+        <label for="create_directory_submit">
+            <img src="{% static 'Cloud/images/menu_icons/folder.png' %}" alt="about"/>
+        </label>
+        <input type="hidden" name="url" value="" class="form_url">
+        <input id="action_id" type="hidden" name="action" value="CreateDirectory">
+        <input id="create_directory_submit" type="submit" value="Создать папку"/>
+    </form>
 </div>
 {% include "Cloud/toast.html" %}
 {% include "Cloud/rename_modal.html" %}

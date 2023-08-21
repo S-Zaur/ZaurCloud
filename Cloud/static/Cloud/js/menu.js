@@ -72,15 +72,11 @@ function open_menu(x, y) {
     if (x + i.offsetWidth > document.documentElement.clientWidth) x -= i.offsetWidth;
     i.style.top = y + "px";
     i.style.left = x + "px";
-    i.style.visibility = "visible";
-    i.style.opacity = "1";
+    i.style.display = "block";
 }
 
 function close_menu() {
-    i.style.opacity = "0";
-    setTimeout(function () {
-        i.style.visibility = "hidden";
-    }, 501);
+    i.style.display = "none";
 }
 
 function deleteSubmitHandler(e) {

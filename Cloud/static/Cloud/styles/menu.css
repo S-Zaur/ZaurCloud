@@ -1,6 +1,5 @@
 #menu {
-    visibility: hidden;
-    opacity: 0;
+    display: none;
     position: fixed;
     background: #fff;
     color: #555;

@@ -56,7 +56,6 @@ document.getElementById("main_container").addEventListener('click', function (e)
 }, false);
 
 document.getElementById("delete_form").addEventListener("submit", deleteSubmitHandler);
-document.getElementById("download_form").addEventListener("submit", downloadSubmitHandler);
 document.getElementById("properties_form").addEventListener("submit", propertiesSubmitHandler);
 document.getElementById("create_directory_form").addEventListener("submit", createDirectorySubmitHandler);
 document.getElementById("rename").addEventListener("submit", function (e) {
@@ -123,17 +122,6 @@ function renameSubmitHandler(e) {
                 current.find(".card").attr("data-url", data.rel_url)
             }
         },
-        statusCode: STATUS_CODES,
-    });
-}
-
-function downloadSubmitHandler(e) {
-    e.preventDefault();
-    $.ajax({
-        type: "GET",
-        url: window.location.href,
-        data: $("#download_form").serialize(),
-        dataType: "json",
         statusCode: STATUS_CODES,
     });
 }

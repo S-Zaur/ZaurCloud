@@ -30,17 +30,10 @@ document.getElementById("main_container").addEventListener('contextmenu', functi
     if (e.target.closest(".container") == null) return;
     e.preventDefault();
 
-    let target = e.target.closest('.col');
-    if (target == null) {
-        toast("Error")
-        return;
-    }
-    currentElem = target;
-
-    let link = currentElem.firstElementChild.dataset.url;
-    if (link == null) {
-        toast("Error")
-        return;
+    currentElem = e.target.closest(".col")
+    let link = $("#grid").attr("data-url")
+    if (currentElem != null) {
+        link = currentElem.firstElementChild.dataset.url;
     }
     let urls = document.getElementsByClassName("form_url")
     Array.prototype.forEach.call(urls, function (url_input) {
@@ -60,7 +53,11 @@ document.getElementById("properties_form").addEventListener("submit", properties
 document.getElementById("create_directory_form").addEventListener("submit", createDirectorySubmitHandler);
 document.getElementById("rename").addEventListener("submit", function (e) {
     e.preventDefault();
-    $("#new_name").val($(currentElem).find(".card-title").text())
+    if (currentElem != null) {
+        $("#new_name").val($(currentElem).find(".card-title").text())
+    } else {
+        $("#new_name").val($("#grid").data("name"))
+    }
     $("#renameModal").modal('show');
 });
 document.getElementById("rename_form").onkeydown = function (e) {
@@ -114,7 +111,9 @@ function renameSubmitHandler(e) {
         data: $("#rename_form").serialize(),
         dataType: "json",
         success: function (data) {
-            if (data.result === "ok") {
+            if (currentElem == null) {
+                window.location.assign(data.abs_url);
+            } else {
                 title.text(name);
                 current.removeAttr("onclick")
                 current.removeAttr("data-url")
@@ -140,14 +139,8 @@ function propertiesSubmitHandler(e) {
                 table.find('tbody')
                     .append($('<tr>')
                         .append($('<td>')
-                            .text(key
-                            )
-                        ).append($('<td>')
-                            .text(
-                                value
-                            )
-                        )
-                    );
+                            .text(key)).append($('<td>')
+                            .text(value)));
             }
             $("#propertiesModal").modal('show');
         },
@@ -157,6 +150,12 @@ function propertiesSubmitHandler(e) {
 
 function createDirectorySubmitHandler(e) {
     e.preventDefault();
+    const cb = $("#in_place_cb")
+    if (currentElem == null) {
+        cb.prop("checked", true);
+    } else {
+        cb.prop("checked", false);
+    }
     $.ajax({
         type: "POST",
         url: window.location.href,
@@ -172,17 +171,12 @@ function createDirectorySubmitHandler(e) {
                     .append($("<img>")
                         .addClass("card-img-top img-fluid img-thumbnail")
                         .attr("src", data.img)
-                        .attr("alt", "object")
-                    )
+                        .attr("alt", "object"))
                     .append($("<div>")
                         .addClass("card-body")
                         .append($("<h5>")
                             .addClass("card-title")
-                            .text(data.name)
-                        )
-                    )
-                )
-            );
+                            .text(data.name)))));
         },
         statusCode: STATUS_CODES,
     });

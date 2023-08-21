@@ -1,9 +1,10 @@
 {% extends "Cloud/base_generic.html" %}
-{% block title %}{{ current|default:"ZaurCloud" }}{% endblock %}
+{% block title %}{{ name|default:"ZaurCloud" }}{% endblock %}
 {% block content %}
     {% load static %}
     <div class="container flex-grow-1" id="main_container">
-        <div id="grid" class="grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6">
+        <div id="grid" data-url="{{ url }}" data-name="{{ name }}"
+             class="grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6">
             {% for object in objects %}
                 <div class="col d-flex align-items-stretch mb-3">
                     <div class="card" data-url="{{ object.get_rel_url }}"

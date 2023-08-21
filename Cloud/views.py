@@ -1,15 +1,15 @@
-import os
-import uuid
-import shutil
-import zipfile
-import tempfile
 import mimetypes
+import os
+import shutil
+import tempfile
 import urllib.parse
+import uuid
+import zipfile
 
 from django.conf import settings
-from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
 from django.core.exceptions import SuspiciousOperation
+from django.http import HttpResponse, JsonResponse
+from django.shortcuts import render
 
 from Cloud.models import CloudObject
 from Cloud.utils import get_files_and_dirs, check_permissions, check_exists, get_dir_size, get_properties
@@ -28,6 +28,8 @@ def open_dir(request, path=""):
         if action == "Rename":
             return rename(file_path, request.POST["new_name"])
         if action == "CreateDirectory":
+            if "in_place" in request.POST:
+                file_path = os.path.join(file_path, "HelloWorld")
             return create_directory(file_path)
         raise SuspiciousOperation
 
@@ -43,7 +45,12 @@ def open_dir(request, path=""):
     if os.path.isfile(file_path):
         raise SuspiciousOperation("Cannot open files")
     objects = get_files_and_dirs(file_path)
-    return render(request, 'Cloud/cloud.html', context={"objects": objects, "current": os.path.split(path)[-1]})
+    obj = CloudObject(file_path)
+    return render(request, 'Cloud/cloud.html', context={
+        "objects": objects,
+        "name": obj.name,
+        "url": obj.get_rel_url()
+    })
 
 
 @check_exists
@@ -87,7 +94,8 @@ def rename(path, name):
     return JsonResponse({
         "result": "ok",
         "abs_url": obj.get_absolute_url(),
-        "rel_url": obj.get_rel_url()
+        "rel_url": obj.get_rel_url(),
+        "name": obj.name,
     })
 
 

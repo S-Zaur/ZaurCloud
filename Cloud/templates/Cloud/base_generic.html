@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="min-vh-100">
 <head>
     <title>{% block title %}Zaur Cloud{% endblock %}</title>
     {% load static %}
@@ -9,7 +9,7 @@
     <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
 </head>
 
-<body>
+<body class="min-vh-100 d-flex flex-column h-100">
 {% include "Cloud/nav.html" %}
 {% block content %}{% endblock %}
 </body>

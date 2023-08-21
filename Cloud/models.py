@@ -1,5 +1,7 @@
-from django.conf import settings
 import os
+
+from django.urls import reverse
+from django.conf import settings
 
 
 class CloudObject:
@@ -42,13 +44,11 @@ class CloudObject:
         return self.name < other.name
 
     def get_absolute_url(self):
-        from django.urls import reverse
-        return reverse('open_dir', args=[self.path])
+        return reverse('open_dir', args=[self.path]) if self.path!="" else reverse('index')
 
     def get_rel_url(self):
-        from django.urls import reverse
-        path = reverse('open_dir', args=[self.path])
-        return path[path.find('/',1):]
+        path = reverse('open_dir', args=[self.path]) if self.path!="" else reverse('index')
+        return path[path.find('/', 1):]
 
     def get_icon(self):
         if not self.IS_FILE:

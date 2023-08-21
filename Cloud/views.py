@@ -23,6 +23,7 @@ def open_dir(request, path=""):
             raise SuspiciousOperation
         action = request.POST["action"]
         file_path = urllib.parse.unquote(request.POST["url"])
+        file_path = os.path.normpath(os.path.join(settings.STORAGE_DIRECTORY, file_path))
         if action == "Delete":
             return delete(file_path)
         if action == "Rename":
@@ -36,6 +37,7 @@ def open_dir(request, path=""):
     if "action" in request.GET:
         action = request.GET["action"]
         file_path = urllib.parse.unquote(request.GET["url"])
+        file_path = os.path.normpath(os.path.join(settings.STORAGE_DIRECTORY, file_path))
         if action == "Download":
             return download(file_path)
         if action == "Properties":
@@ -105,7 +107,7 @@ def properties(path):
 
 
 def create_directory(path):
-    file_path = os.path.split(os.path.normpath(os.path.join(settings.STORAGE_DIRECTORY, path)))[0]
+    file_path = os.path.split(path)[0]
     path = os.path.join(file_path, "Новая папка")
     if os.path.exists(path):
         i = 2

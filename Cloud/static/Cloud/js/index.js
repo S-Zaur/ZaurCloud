@@ -1,4 +1,4 @@
-let i = document.getElementById("menu");
+let menu = document.getElementById("menu");
 let currentElem = null;
 let mainContainer = document.getElementById("main_container");
 let dropArea = document.getElementById("drop-area")
@@ -21,11 +21,11 @@ const STATUS_CODES = {
     }
 }
 document.addEventListener('contextmenu', function (e) {
-    if (e.target.closest(".container") != null) return;
+    if (e.target.closest("#main_container") != null) return;
     close_menu();
 }, false);
 document.addEventListener('click', function (e) {
-    if (e.target.closest(".container") != null) return;
+    if (e.target.closest("#main_container") != null) return;
     close_menu();
 }, false);
 mainContainer.addEventListener('contextmenu', function (e) {
@@ -81,15 +81,15 @@ document.getElementById("rename_form_submit").addEventListener("click", renameSu
 dropArea.addEventListener('drop', handleDrop, false)
 
 function open_menu(x, y) {
-    if (y + i.offsetHeight > document.documentElement.clientHeight) y -= i.offsetHeight;
-    if (x + i.offsetWidth > document.documentElement.clientWidth) x -= i.offsetWidth;
-    i.style.top = y + "px";
-    i.style.left = x + "px";
-    i.style.display = "block";
+    if (y + menu.offsetHeight > document.documentElement.clientHeight) y -= menu.offsetHeight;
+    if (x + menu.offsetWidth > document.documentElement.clientWidth) x -= menu.offsetWidth;
+    menu.style.top = y + "px";
+    menu.style.left = x + "px";
+    menu.style.display = "block";
 }
 
 function close_menu() {
-    i.style.display = "none";
+    menu.style.display = "none";
 }
 
 function deleteSubmitHandler(e) {

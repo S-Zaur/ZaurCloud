@@ -1,26 +1,23 @@
-{% extends "Cloud/base_generic.html" %}
-{% block title %}{{ name|default:"ZaurCloud" }}{% endblock %}
-{% block content %}
+<!doctype html>
+<html lang="en" class="min-vh-100">
+<head>
+    <title>{{ name|default:"ZaurCloud" }}</title>
     {% load static %}
-    <div class="container flex-grow-1 position-relative" id="main_container">
-        <div id="grid" data-url="{{ url }}" data-name="{{ name }}"
-             class="grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6">
-            {% for object in objects %}
-                <div class="col d-flex align-items-stretch mb-3">
-                    <div class="card" data-url="{{ object.get_rel_url }}"
-                            {% if not object.IS_FILE %}
-                         onclick="window.location='{{ object.get_absolute_url }}';"
-                            {% endif %}>
-                        <img src="{% static object.get_icon %}" draggable="false"
-                             class="card-img-top img-fluid img-thumbnail" alt="object">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ object.name }}</h5>
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-        {% include "Cloud/drop_area.html" %}
-    </div>
-    {% include "Cloud/right_click_menu.html" %}
-{% endblock %}
+    <link rel="stylesheet" type="text/css" href="{% static 'styles/bootstrap.min.css' %}">
+    <link rel="shortcut icon" type="image/ico" href="{% static 'images/favicon.ico' %}">
+    <script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+</head>
+
+<body class="min-vh-100 d-flex flex-column h-100">
+{% include "Cloud/nav.html" %}
+<div class="d-flex flex-row container">
+    {% include 'Cloud/sidebar.html' %}
+    {% include 'Cloud/grid.html' %}
+</div>
+{% include "Cloud/right_click_menu.html" %}
+{% include "Cloud/toast.html" %}
+{% include "Cloud/rename_modal.html" %}
+{% include "Cloud/properties_modal.html" %}
+</body>
+</html>

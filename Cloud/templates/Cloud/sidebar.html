@@ -1,0 +1,40 @@
+<div class="d-flex flex-column flex-shrink-0 p-3 bg-light" style="width: 200px;">
+    <div class="position-sticky" style="top: 80px">
+        <button class="btn btn-lg btn-outline-success my-2 my-sm-0" type="submit">Отправить</button>
+        <hr>
+        <ul class="nav nav-pills flex-column mb-auto">
+            <li>
+                <a href="{% url 'index' %}" class="nav-link link-dark" aria-current="page">
+                    {% load static %}
+                    <img class="bi me-2" width="16" height="16" src="{% static "Cloud/images/sidebar_icon/home.png" %}"
+                         alt="home">
+                    Главная
+                </a>
+            </li>
+            <li>
+                <a href="#" class="nav-link link-dark" aria-current="page">
+                    {% load static %}
+                    <img class="bi me-2" width="16" height="16" src="{% static "Cloud/images/sidebar_icon/star.png" %}"
+                         alt="star">
+                    Избранное
+                </a>
+            </li>
+            <li>
+                <a href="#" class="nav-link link-dark" aria-current="page">
+                    {% load static %}
+                    <img class="bi me-2" width="16" height="16" src="{% static "Cloud/images/sidebar_icon/share.png" %}"
+                         alt="share">
+                    Общее
+                </a>
+            </li>
+            <li>
+                <a href="#" class="nav-link link-dark" aria-current="page">
+                    {% load static %}
+                    <img class="bi me-2" width="16" height="16" src="{% static "Cloud/images/sidebar_icon/trash.png" %}"
+                         alt="trash">
+                    Корзина
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>

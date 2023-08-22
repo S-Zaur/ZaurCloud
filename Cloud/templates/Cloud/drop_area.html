@@ -1,0 +1,20 @@
+<div id="drop-area" class="position-absolute">
+    <form class="my-form" id="upload_form">
+        {% csrf_token %}
+        <p class="text-center display-1">Drop files here</p>
+    </form>
+</div>
+<style>
+    #drop-area {
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        border: 2px dashed purple;
+        background: rgba(128, 0, 128, 0.3);
+        border-radius: 20px;
+        font-family: sans-serif;
+        padding: 30px;
+        display: none;
+    }
+</style>

@@ -32,6 +32,8 @@ def open_dir(request, path=""):
             if "in_place" in request.POST:
                 file_path = os.path.join(file_path, "HelloWorld")
             return create_directory(file_path)
+        if action == "Upload":
+            return upload(file_path, request.FILES)
         raise SuspiciousOperation
 
     if "action" in request.GET:
@@ -123,3 +125,27 @@ def create_directory(path):
         "rel_url": obj.get_rel_url(),
         "abs_url": obj.get_absolute_url(),
     })
+
+
+def upload(path, files):
+    result = {"files": []}
+    for filename, file in files.items():
+        name = files[filename].name
+        file_path = os.path.join(path, name)
+        if os.path.exists(file_path):
+            result["files"].append({
+                "name": name,
+                "exists": "true"
+            })
+            continue
+        with open(file_path, "wb+") as destination:
+            for chunk in file.chunks():
+                destination.write(chunk)
+        obj = CloudObject(file_path)
+        result["files"].append({
+            "name": obj.name,
+            "img": "/static/" + obj.get_icon(),
+            "rel_url": obj.get_rel_url(),
+        })
+    result["result"] = "ok"
+    return JsonResponse(result)

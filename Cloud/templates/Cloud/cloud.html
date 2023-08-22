@@ -2,7 +2,7 @@
 {% block title %}{{ name|default:"ZaurCloud" }}{% endblock %}
 {% block content %}
     {% load static %}
-    <div class="container flex-grow-1" id="main_container">
+    <div class="container flex-grow-1 position-relative" id="main_container">
         <div id="grid" data-url="{{ url }}" data-name="{{ name }}"
              class="grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6">
             {% for object in objects %}
@@ -11,7 +11,7 @@
                             {% if not object.IS_FILE %}
                          onclick="window.location='{{ object.get_absolute_url }}';"
                             {% endif %}>
-                        <img src="{% static object.get_icon %}"
+                        <img src="{% static object.get_icon %}" draggable="false"
                              class="card-img-top img-fluid img-thumbnail" alt="object">
                         <div class="card-body">
                             <h5 class="card-title">{{ object.name }}</h5>
@@ -20,6 +20,7 @@
                 </div>
             {% endfor %}
         </div>
+        {% include "Cloud/drop_area.html" %}
     </div>
     {% include "Cloud/right_click_menu.html" %}
 {% endblock %}

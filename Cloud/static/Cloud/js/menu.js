@@ -1,5 +1,7 @@
 let i = document.getElementById("menu");
 let currentElem = null;
+let mainContainer = document.getElementById("main_container");
+let dropArea = document.getElementById("drop-area")
 const STATUS_CODES = {
     403: function (data) {
         const res = JSON.parse(data.responseText)
@@ -26,8 +28,7 @@ document.addEventListener('click', function (e) {
     if (e.target.closest(".container") != null) return;
     close_menu();
 }, false);
-document.getElementById("main_container").addEventListener('contextmenu', function (e) {
-    if (e.target.closest(".container") == null) return;
+mainContainer.addEventListener('contextmenu', function (e) {
     e.preventDefault();
 
     currentElem = e.target.closest(".col")
@@ -44,7 +45,7 @@ document.getElementById("main_container").addEventListener('contextmenu', functi
     const posY = e.clientY;
     open_menu(posX, posY);
 }, false);
-document.getElementById("main_container").addEventListener('click', function (e) {
+mainContainer.addEventListener('click', function (e) {
     close_menu()
 }, false);
 
@@ -66,6 +67,18 @@ document.getElementById("rename_form").onkeydown = function (e) {
     }
 };
 document.getElementById("rename_form_submit").addEventListener("click", renameSubmitHandler);
+
+;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    mainContainer.addEventListener(eventName, preventDefaults, false);
+    dropArea.addEventListener(eventName, preventDefaults, false);
+});
+['dragenter', 'dragover'].forEach(eventName => {
+    mainContainer.addEventListener(eventName, highlight, false)
+});
+['dragleave', 'drop'].forEach(eventName => {
+    dropArea.addEventListener(eventName, unHighlight, false)
+})
+dropArea.addEventListener('drop', handleDrop, false)
 
 function open_menu(x, y) {
     if (y + i.offsetHeight > document.documentElement.clientHeight) y -= i.offsetHeight;
@@ -181,4 +194,64 @@ function createDirectorySubmitHandler(e) {
 function toast(text) {
     $("#message_text").text(text);
     $(".toast").toast('show');
+}
+
+function preventDefaults(e) {
+    e.preventDefault()
+    e.stopPropagation()
+}
+
+function highlight(e) {
+    dropArea.style.display = "block"
+}
+
+function unHighlight(e) {
+    dropArea.style.display = "none";
+}
+
+function handleDrop(e) {
+    let dt = e.dataTransfer
+    let files = dt.files
+    uploadFiles(files)
+}
+
+function uploadFiles(files) {
+    let formData = new FormData()
+    const csrf = $("#upload_form").serialize().split("=")
+    formData.append(csrf[0], csrf[1])
+    formData.append("action", "Upload");
+    ([...files]).forEach((file) => {
+        formData.append(file.name, file);
+    })
+    formData.append("url", $("#grid").attr("data-url"))
+    $.ajax({
+        type: "POST", url: window.location.href, data: formData, success: function (data) {
+            let exists = [];
+            data.files.forEach((file) => {
+                if ("exists" in file) {
+                    exists.push(file.name);
+                } else {
+                    $('#grid').append($('<div>')
+                        .addClass("col d-flex align-items-stretch mb-3")
+                        .append($('<div>')
+                            .addClass("card")
+                            .attr("data-url", file.rel_url)
+                            .append($("<img>")
+                                .addClass("card-img-top img-fluid img-thumbnail")
+                                .attr("src", file.img)
+                                .attr("alt", "object"))
+                            .append($("<div>")
+                                .addClass("card-body")
+                                .append($("<h5>")
+                                    .addClass("card-title")
+                                    .text(file.name)))));
+                }
+            });
+            if (exists.length > 0) {
+                toast("Файлы: " + exists.join(", ") + " уже существуют, для замены удалите их")
+            } else {
+                toast("OK")
+            }
+        }, processData: false, contentType: false, statusCode: STATUS_CODES,
+    });
 }

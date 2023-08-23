@@ -38,7 +38,7 @@ function handleDrop(e) {
 
 function uploadFiles(files) {
     let formData = new FormData()
-    const csrf = $("#upload_form").serialize().split("=")
+    const csrf = $("#upload-form").serialize().split("=")
     formData.append(csrf[0], csrf[1])
     formData.append("action", "Upload");
     ([...files]).forEach((file) => {

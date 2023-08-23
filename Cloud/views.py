@@ -27,9 +27,9 @@ def open_dir(request, path=""):
         if action == "Delete":
             return delete(file_path)
         if action == "Rename":
-            return rename(file_path, request.POST["new_name"])
+            return rename(file_path, request.POST["new-name"])
         if action == "CreateDirectory":
-            if "in_place" in request.POST:
+            if "in-place" in request.POST:
                 file_path = os.path.join(file_path, "HelloWorld")
             return create_directory(file_path)
         if action == "Upload":

@@ -7,7 +7,7 @@ export function deleteSubmitHandler(e) {
     $.ajax({
         type: "POST",
         url: window.location.href,
-        data: $("#delete_form").serialize(),
+        data: $("#delete-form").serialize(),
         dataType: "json",
         success: function (data) {
             toast("Удалено");
@@ -22,12 +22,12 @@ export function renameSubmitHandler(e) {
     $("#renameModal").modal('hide');
     const current = $(currentElem)
     const title = current.find(".card-title")
-    const name = $("#new_name").val()
+    const name = $("#new-name").val()
     if (title.text() === name) return;
     $.ajax({
         type: "POST",
         url: window.location.href,
-        data: $("#rename_form").serialize(),
+        data: $("#rename-form").serialize(),
         dataType: "json",
         success: function (data) {
             if (currentElem == null) {
@@ -49,7 +49,7 @@ export function propertiesSubmitHandler(e) {
     $.ajax({
         type: "GET",
         url: window.location.href,
-        data: $("#properties_form").serialize(),
+        data: $("#properties-form").serialize(),
         dataType: "json",
         success: function (data) {
             const table = $('#propertiesTable')
@@ -69,7 +69,7 @@ export function propertiesSubmitHandler(e) {
 
 export function createDirectorySubmitHandler(e) {
     e.preventDefault();
-    const cb = $("#in_place_cb")
+    const cb = $("#in-place-cb")
     if (currentElem == null) {
         cb.prop("checked", true);
     } else {
@@ -78,7 +78,7 @@ export function createDirectorySubmitHandler(e) {
     $.ajax({
         type: "POST",
         url: window.location.href,
-        data: $("#create_directory_form").serialize(),
+        data: $("#create-directory-form").serialize(),
         dataType: "json",
         success: function (data) {
             $('#grid').append($('<div>')

@@ -1,6 +1,6 @@
 import {toast} from "./toast.js";
 
-export const mainContainer = document.getElementById("main_container");
+export const mainContainer = document.getElementById("main-container");
 export const STATUS_CODES = {
     403: function (data) {
         const res = JSON.parse(data.responseText)

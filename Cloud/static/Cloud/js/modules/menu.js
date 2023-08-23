@@ -5,11 +5,11 @@ export let currentElem = null;
 
 export function addMenu() {
     document.addEventListener('contextmenu', function (e) {
-        if (e.target.closest("#main_container") != null) return;
+        if (e.target.closest("#main-container") != null) return;
         close_menu();
     }, false);
     document.addEventListener('click', function (e) {
-        if (e.target.closest("#main_container") != null) return;
+        if (e.target.closest("#main-container") != null) return;
         close_menu();
     }, false);
     mainContainer.addEventListener('contextmenu', function (e) {
@@ -20,7 +20,7 @@ export function addMenu() {
         if (currentElem != null) {
             link = currentElem.firstElementChild.dataset.url;
         }
-        let urls = document.getElementsByClassName("form_url")
+        let urls = document.getElementsByClassName("form-url")
         Array.prototype.forEach.call(urls, function (url_input) {
             url_input.value = link;
         });

@@ -7,20 +7,20 @@ import {
 import {currentElem} from "./menu.js";
 
 export function addMenuFormsEventListeners() {
-    document.getElementById("delete_form").addEventListener("submit", deleteSubmitHandler);
-    document.getElementById("properties_form").addEventListener("submit", propertiesSubmitHandler);
-    document.getElementById("create_directory_form").addEventListener("submit", createDirectorySubmitHandler);
-    document.getElementById("rename_form_submit").addEventListener("click", renameSubmitHandler);
+    document.getElementById("delete-form").addEventListener("submit", deleteSubmitHandler);
+    document.getElementById("properties-form").addEventListener("submit", propertiesSubmitHandler);
+    document.getElementById("create-directory-form").addEventListener("submit", createDirectorySubmitHandler);
+    document.getElementById("rename-form-submit").addEventListener("click", renameSubmitHandler);
     document.getElementById("rename").addEventListener("submit", function (e) {
         e.preventDefault();
         if (currentElem != null) {
-            $("#new_name").val($(currentElem).find(".card-title").text())
+            $("#new-name").val($(currentElem).find(".card-title").text())
         } else {
-            $("#new_name").val($("#grid").data("name"))
+            $("#new-name").val($("#grid").data("name"))
         }
         $("#renameModal").modal('show');
     });
-    document.getElementById("rename_form").onkeydown = function (e) {
+    document.getElementById("rename-form").onkeydown = function (e) {
         if (e.key === "Enter") {
             renameSubmitHandler(e);
         }

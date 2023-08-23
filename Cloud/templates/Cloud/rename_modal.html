@@ -6,17 +6,17 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body d-flex justify-content-center">
-                <form method="post" id="rename_form">
+                <form method="post" id="rename-form">
                     {% csrf_token %}
-                    <label for="new_name">Новое имя</label>
-                    <input type="hidden" name="url" value="" class="form_url">
-                    <input id="new_name" type="text" name="new_name" value="">
-                    <input id="action_id" type="hidden" name="action" value="Rename">
+                    <label for="new-name">Новое имя</label>
+                    <input type="hidden" name="url" value="" class="form-url">
+                    <input id="new-name" type="text" name="new-name" value="">
+                    <input id="action-id" type="hidden" name="action" value="Rename">
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-                <button type="submit" class="btn btn-primary" id="rename_form_submit">Переименовать</button>
+                <button type="submit" class="btn btn-primary" id="rename-form-submit">Переименовать</button>
             </div>
         </div>
     </div>

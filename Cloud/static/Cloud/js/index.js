@@ -20,65 +20,67 @@ const STATUS_CODES = {
         toast("Ошибка");
     }
 }
-document.addEventListener('contextmenu', function (e) {
-    if (e.target.closest("#main_container") != null) return;
-    close_menu();
-}, false);
-document.addEventListener('click', function (e) {
-    if (e.target.closest("#main_container") != null) return;
-    close_menu();
-}, false);
-mainContainer.addEventListener('contextmenu', function (e) {
-    e.preventDefault();
+$(document).ready(function () {
+    document.addEventListener('contextmenu', function (e) {
+        if (e.target.closest("#main_container") != null) return;
+        close_menu();
+    }, false);
+    document.addEventListener('click', function (e) {
+        if (e.target.closest("#main_container") != null) return;
+        close_menu();
+    }, false);
+    mainContainer.addEventListener('contextmenu', function (e) {
+        e.preventDefault();
 
-    currentElem = e.target.closest(".col")
-    let link = $("#grid").attr("data-url")
-    if (currentElem != null) {
-        link = currentElem.firstElementChild.dataset.url;
-    }
-    let urls = document.getElementsByClassName("form_url")
-    Array.prototype.forEach.call(urls, function (url_input) {
-        url_input.value = link;
+        currentElem = e.target.closest(".col")
+        let link = $("#grid").attr("data-url")
+        if (currentElem != null) {
+            link = currentElem.firstElementChild.dataset.url;
+        }
+        let urls = document.getElementsByClassName("form_url")
+        Array.prototype.forEach.call(urls, function (url_input) {
+            url_input.value = link;
+        });
+
+        const posX = e.clientX;
+        const posY = e.clientY;
+        open_menu(posX, posY);
+    }, false);
+    mainContainer.addEventListener('click', function (e) {
+        close_menu()
+    }, false);
+
+    document.getElementById("delete_form").addEventListener("submit", deleteSubmitHandler);
+    document.getElementById("properties_form").addEventListener("submit", propertiesSubmitHandler);
+    document.getElementById("create_directory_form").addEventListener("submit", createDirectorySubmitHandler);
+    document.getElementById("rename").addEventListener("submit", function (e) {
+        e.preventDefault();
+        if (currentElem != null) {
+            $("#new_name").val($(currentElem).find(".card-title").text())
+        } else {
+            $("#new_name").val($("#grid").data("name"))
+        }
+        $("#renameModal").modal('show');
     });
+    document.getElementById("rename_form").onkeydown = function (e) {
+        if (e.key === "Enter") {
+            renameSubmitHandler(e);
+        }
+    };
+    document.getElementById("rename_form_submit").addEventListener("click", renameSubmitHandler);
 
-    const posX = e.clientX;
-    const posY = e.clientY;
-    open_menu(posX, posY);
-}, false);
-mainContainer.addEventListener('click', function (e) {
-    close_menu()
-}, false);
-
-document.getElementById("delete_form").addEventListener("submit", deleteSubmitHandler);
-document.getElementById("properties_form").addEventListener("submit", propertiesSubmitHandler);
-document.getElementById("create_directory_form").addEventListener("submit", createDirectorySubmitHandler);
-document.getElementById("rename").addEventListener("submit", function (e) {
-    e.preventDefault();
-    if (currentElem != null) {
-        $("#new_name").val($(currentElem).find(".card-title").text())
-    } else {
-        $("#new_name").val($("#grid").data("name"))
-    }
-    $("#renameModal").modal('show');
-});
-document.getElementById("rename_form").onkeydown = function (e) {
-    if (e.key === "Enter") {
-        renameSubmitHandler(e);
-    }
-};
-document.getElementById("rename_form_submit").addEventListener("click", renameSubmitHandler);
-
-;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-    mainContainer.addEventListener(eventName, preventDefaults, false);
-    dropArea.addEventListener(eventName, preventDefaults, false);
-});
-['dragenter', 'dragover'].forEach(eventName => {
-    mainContainer.addEventListener(eventName, highlight, false)
-});
-['dragleave', 'drop'].forEach(eventName => {
-    dropArea.addEventListener(eventName, unHighlight, false)
+    ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        mainContainer.addEventListener(eventName, preventDefaults, false);
+        dropArea.addEventListener(eventName, preventDefaults, false);
+    });
+    ['dragenter', 'dragover'].forEach(eventName => {
+        mainContainer.addEventListener(eventName, highlight, false)
+    });
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, unHighlight, false)
+    })
+    dropArea.addEventListener('drop', handleDrop, false);
 })
-dropArea.addEventListener('drop', handleDrop, false)
 
 function open_menu(x, y) {
     if (y + menu.offsetHeight > document.documentElement.clientHeight) y -= menu.offsetHeight;

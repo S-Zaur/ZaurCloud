@@ -15,6 +15,12 @@ export function dragAndDrop() {
         dropArea.addEventListener(eventName, unHighlight, false)
     })
     dropArea.addEventListener('drop', handleDrop, false);
+    $('#file-input').on('change', function () {
+        uploadFiles(document.getElementById('file-input').files);
+    })
+    $("#upload-file-button").on('click', function () {
+        document.getElementById('file-input').click();
+    })
 }
 
 function preventDefaults(e) {

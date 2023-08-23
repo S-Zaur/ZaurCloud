@@ -6,11 +6,11 @@ export let currentElem = null;
 export function addMenu() {
     document.addEventListener('contextmenu', function (e) {
         if (e.target.closest("#main-container") != null) return;
-        close_menu();
+        closeMenu();
     }, false);
     document.addEventListener('click', function (e) {
         if (e.target.closest("#main-container") != null) return;
-        close_menu();
+        closeMenu();
     }, false);
     mainContainer.addEventListener('contextmenu', function (e) {
         e.preventDefault();
@@ -27,14 +27,14 @@ export function addMenu() {
 
         const posX = e.clientX;
         const posY = e.clientY;
-        open_menu(posX, posY);
+        openMenu(posX, posY);
     }, false);
     mainContainer.addEventListener('click', function () {
-        close_menu()
+        closeMenu()
     }, false);
 }
 
-function open_menu(x, y) {
+function openMenu(x, y) {
     if (y + menu.offsetHeight > document.documentElement.clientHeight) y -= menu.offsetHeight;
     if (x + menu.offsetWidth > document.documentElement.clientWidth) x -= menu.offsetWidth;
     menu.style.top = y + "px";
@@ -42,6 +42,6 @@ function open_menu(x, y) {
     menu.style.display = "block";
 }
 
-function close_menu() {
+function closeMenu() {
     menu.style.display = "none";
 }

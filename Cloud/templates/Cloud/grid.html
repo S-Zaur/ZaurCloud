@@ -4,7 +4,7 @@
     {% for object in objects %}
         <div class="col d-flex align-items-stretch mb-3">
             <div class="card" data-url="{{ object.get_rel_url }}"
-                    {% if not object.IS_FILE %}
+                    {% if not object.is_file %}
                  onclick="window.location='{{ object.get_absolute_url }}';"
                     {% endif %}>
                 <img src="{% static object.get_icon %}" draggable="false"

@@ -18,7 +18,11 @@
             </ul>
             <form class="d-flex">
                 <button class="btn btn-outline-success me-2" type="button"
-                        onclick="window.location='{% url 'logout' %}';">Logout
+                        {% if request.user.is_authenticated %}
+                            onclick="window.location='{% url 'logout' %}';">Logout
+                        {% else %}
+                            onclick="window.location='{% url 'login' %}';">Login
+                        {% endif %}
                 </button>
             </form>
         </div>

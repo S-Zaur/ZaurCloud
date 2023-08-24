@@ -1,0 +1,23 @@
+{% load static %}
+<div id="menu">
+    <form method="post" id="delete-from-favorite-form">
+        {% csrf_token %}
+        <label for="delete-from-favorite-submit">
+            <img src="{% static 'Cloud/images/menu_icons/star-empty.png' %}" alt="star"/>
+        </label>
+        <input type="hidden" name="url" value="" class="form-url">
+        <input id="action-id" type="hidden" name="action" value="DeleteFav">
+        <input id="delete-from-favorite-submit" type="submit" value="Удалить из избранного"/>
+    </form>
+    <form method="get" id="go-to-form">
+        {% csrf_token %}
+        <label for="go-to-submit">
+            <img src="{% static 'Cloud/images/menu_icons/goto.png' %}" alt="goto"/>
+        </label>
+        <input type="hidden" name="url" value="" class="form-url">
+        <input id="action-id" type="hidden" name="action" value="GoTo">
+        <input id="go-to-submit" type="submit" value="Перейти к расположению"/>
+    </form>
+</div>
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'Cloud/styles/menu.css' %}">

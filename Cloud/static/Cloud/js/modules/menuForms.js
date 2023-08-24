@@ -1,4 +1,5 @@
 import {
+    addFavoriteSubmitHandler,
     createDirectorySubmitHandler,
     deleteSubmitHandler,
     propertiesSubmitHandler,
@@ -9,6 +10,7 @@ import {currentElem} from "./menu.js";
 export function addMenuFormsEventListeners() {
     document.getElementById("delete-form").addEventListener("submit", deleteSubmitHandler);
     document.getElementById("properties-form").addEventListener("submit", propertiesSubmitHandler);
+    document.getElementById("add-to-favorite-form").addEventListener("submit", addFavoriteSubmitHandler);
     document.getElementById("create-directory-form").addEventListener("submit", createDirectorySubmitHandler);
     document.getElementById("rename-form-submit").addEventListener("click", renameSubmitHandler);
     document.getElementById("rename").addEventListener("submit", function (e) {

@@ -100,3 +100,21 @@ export function createDirectorySubmitHandler(e) {
         statusCode: STATUS_CODES,
     });
 }
+
+export function addFavoriteSubmitHandler(e) {
+    e.preventDefault();
+    $.ajax({
+        type: "POST",
+        url: window.location.href,
+        data: $("#add-to-favorite-form").serialize(),
+        dataType: "json",
+        success: function (data) {
+            if (data.result === "Already added") {
+                toast("Уже в избранном")
+            } else {
+                toast("Добавлено в избранное");
+            }
+        },
+        statusCode: STATUS_CODES,
+    });
+}

@@ -7,11 +7,12 @@ import uuid
 import zipfile
 
 from django.conf import settings
-from django.core.exceptions import SuspiciousOperation
+from django.core.exceptions import SuspiciousOperation, ObjectDoesNotExist
 from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.urls import reverse
 
-from Cloud.models import CloudObject
+from Cloud.models import CloudObject, Favorites
 from Cloud.utils import get_files_and_dirs, check_permissions, check_exists, get_dir_size, get_properties
 
 
@@ -34,6 +35,9 @@ def open_dir(request, path=""):
             return create_directory(file_path)
         if action == "Upload":
             return upload(file_path, request.FILES)
+        if action == "AddFav":
+            return add_favorite(file_path, request.user)
+
         raise SuspiciousOperation
 
     if "action" in request.GET:
@@ -54,6 +58,33 @@ def open_dir(request, path=""):
         "objects": objects,
         "name": obj.name,
         "url": obj.get_rel_url()
+    })
+
+
+@check_permissions
+def favorites(request):
+    if request.method == "POST":
+        if "action" not in request.POST:
+            raise SuspiciousOperation
+        action = request.POST["action"]
+        file_path = urllib.parse.unquote(request.POST["url"])
+        file_path = os.path.normpath(os.path.join(settings.STORAGE_DIRECTORY, file_path))
+        if action == "DeleteFav":
+            delete_favorite(file_path, request.user)
+        raise SuspiciousOperation
+    if "action" in request.GET:
+        action = request.GET["action"]
+        if action == "GoTo":
+            url = urllib.parse.unquote(request.GET["url"])
+            url = os.path.split(url)[0]
+            return redirect(reverse("open_dir", args=[url]))
+        raise SuspiciousOperation
+    objects = CloudObject.objects.filter(
+        favorites__user_id=request.user.id
+    )
+    return render(request, 'Cloud/favorites/favorites.html', context={
+        "objects": objects,
+        "name": "Избранное",
     })
 
 
@@ -149,3 +180,21 @@ def upload(path, files):
         })
     result["result"] = "ok"
     return JsonResponse(result)
+
+
+def add_favorite(path, user):
+    try:
+        co = CloudObject.objects.get(_real_path=path)
+    except ObjectDoesNotExist:
+        co = CloudObject(path=path)
+        co.save()
+    fv, created = Favorites.objects.get_or_create(obj=co, user=user)
+    if not created:
+        return JsonResponse({"result": "Already added"})
+    return JsonResponse({"result": "ok"})
+
+
+def delete_favorite(path, user):
+    (Favorites.objects.filter(user_id=user.id) & Favorites.objects.filter(
+        obj___real_path=path)).delete()
+    return JsonResponse({"result": "ok"})

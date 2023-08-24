@@ -65,3 +65,8 @@ class CloudObject(models.Model):
         if not self.is_file:
             return 'Cloud/images/folder.png'
         return ICONS.get(self.ext, "Cloud/images/file.png")
+
+
+class Favorites(models.Model):
+    obj = models.ForeignKey(CloudObject, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)

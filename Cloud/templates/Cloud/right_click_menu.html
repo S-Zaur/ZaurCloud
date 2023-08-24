@@ -71,6 +71,15 @@
         <input id="action-id" type="hidden" name="action" value="CreateDirectory">
         <input id="create-directory-submit" type="submit" value="Создать папку"/>
     </form>
+    <form method="post" id="add-to-favorite-form">
+        {% csrf_token %}
+        <label for="add-to-favorite-submit">
+            <img src="{% static 'Cloud/images/menu_icons/star.png' %}" alt="star"/>
+        </label>
+        <input type="hidden" name="url" value="" class="form-url">
+        <input id="action-id" type="hidden" name="action" value="AddFav">
+        <input id="add-to-favorite-submit" type="submit" value="Добавить в избранное"/>
+    </form>
 </div>
 {% load static %}
 <link rel="stylesheet" type="text/css" href="{% static 'Cloud/styles/menu.css' %}">

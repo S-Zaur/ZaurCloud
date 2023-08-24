@@ -3,7 +3,7 @@ import {toast} from "./toast.js";
 
 const dropArea = document.getElementById("drop-area")
 
-export function dragAndDrop() {
+export function addDragAndDrop() {
     ;['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
         mainContainer.addEventListener(eventName, preventDefaults, false);
         dropArea.addEventListener(eventName, preventDefaults, false);

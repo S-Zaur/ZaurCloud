@@ -1,13 +1,13 @@
 {% load static %}
 <div id="menu">
-    <form method="post" id="delete-from-favorite-form">
+    <form method="post" id="delete-favorite-form">
         {% csrf_token %}
-        <label for="delete-from-favorite-submit">
+        <label for="delete-favorite-submit">
             <img src="{% static 'Cloud/images/menu_icons/star-empty.png' %}" alt="star"/>
         </label>
         <input type="hidden" name="url" value="" class="form-url">
         <input id="action-id" type="hidden" name="action" value="DeleteFav">
-        <input id="delete-from-favorite-submit" type="submit" value="Удалить из избранного"/>
+        <input id="delete-favorite-submit" type="submit" value="Удалить из избранного"/>
     </form>
     <form method="get" id="go-to-form">
         {% csrf_token %}

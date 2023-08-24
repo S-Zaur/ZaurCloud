@@ -1,7 +1,7 @@
 import {addMenu} from "./modules/menu.js";
-import {addMenuFormsEventListeners} from "./modules/favorites/menuForms.js";
+import {addDeleteFavoriteEventListeners} from "./modules/submit_handlers/delete_favorite_submit_handler.js";
 
 $(document).ready(function () {
     addMenu();
-    addMenuFormsEventListeners();
+    addDeleteFavoriteEventListeners();
 })

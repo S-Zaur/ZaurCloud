@@ -1,22 +1,18 @@
 {% load static %}
-<div class="position-relative w-100" id="main-container"
-     style="height:calc(100vh - 70px);overflow: auto;overflow-x: hidden">
-    <div id="grid" data-url="{{ url }}" data-name="{{ name }}"
-         class="grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6 p-2">
-        {% for object in objects %}
-            <div class="col d-flex align-items-stretch mb-3">
-                <div class="card" data-url="{{ object.get_rel_url }}"
-                        {% if not object.IS_FILE %}
-                     onclick="window.location='{{ object.get_absolute_url }}';"
-                        {% endif %}>
-                    <img src="{% static object.get_icon %}" draggable="false"
-                         class="card-img-top img-fluid img-thumbnail" alt="object">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ object.name }}</h5>
-                    </div>
+<div id="grid" data-url="{{ url }}" data-name="{{ name }}"
+     class="grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6 p-2">
+    {% for object in objects %}
+        <div class="col d-flex align-items-stretch mb-3">
+            <div class="card" data-url="{{ object.get_rel_url }}"
+                    {% if not object.IS_FILE %}
+                 onclick="window.location='{{ object.get_absolute_url }}';"
+                    {% endif %}>
+                <img src="{% static object.get_icon %}" draggable="false"
+                     class="card-img-top img-fluid img-thumbnail" alt="object">
+                <div class="card-body">
+                    <h5 class="card-title">{{ object.name }}</h5>
                 </div>
             </div>
-        {% endfor %}
-    </div>
-    {% include "Cloud/drop_area.html" %}
+        </div>
+    {% endfor %}
 </div>

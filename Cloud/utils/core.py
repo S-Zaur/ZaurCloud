@@ -8,7 +8,7 @@ from django.http import Http404
 from django.shortcuts import redirect
 from django.urls import reverse
 
-from .models import CloudObject
+from Cloud.models import CloudObject
 
 
 def get_files_and_dirs(path):
@@ -64,7 +64,7 @@ def get_dirs_and_files_count(path):
     for address, dirs, files in os.walk(path):
         dirs_count += len(dirs)
         files_count += len(files)
-    return (dirs_count, files_count)
+    return dirs_count, files_count
 
 
 def get_properties(path):

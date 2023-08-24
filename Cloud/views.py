@@ -74,6 +74,12 @@ def favorites(request):
             url = urllib.parse.unquote(request.GET["url"])
             url = os.path.split(url)[0][1:]
             return redirect(reverse("open_dir", args=[url]))
+        file_path = urllib.parse.unquote(request.GET["url"])
+        file_path = os.path.normpath(os.path.join(settings.STORAGE_DIRECTORY, file_path))
+        if action == "Download":
+            return fm.download(file_path)
+        if action == "Properties":
+            return fm.properties(file_path)
         raise SuspiciousOperation
     objects = CloudObject.objects.filter(
         favorites__user_id=request.user.id

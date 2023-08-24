@@ -1,5 +1,23 @@
 {% load static %}
 <div id="menu">
+    <form method="get" id="download-form">
+        {% csrf_token %}
+        <label for="download-submit">
+            <img src="{% static 'Cloud/images/menu_icons/download.png' %}" alt="download"/>
+        </label>
+        <input type="hidden" name="url" value="" class="form-url">
+        <input id="action-id" type="hidden" name="action" value="Download">
+        <input id="download-submit" type="submit" value="Скачать"/>
+    </form>
+    <form method="get" id="properties-form">
+        {% csrf_token %}
+        <label for="properties-submit">
+            <img src="{% static 'Cloud/images/menu_icons/about.png' %}" alt="about"/>
+        </label>
+        <input type="hidden" name="url" value="" class="form-url">
+        <input id="action-id" type="hidden" name="action" value="Properties">
+        <input id="properties-submit" type="submit" value="Свойства"/>
+    </form>
     <form method="post" id="delete-favorite-form">
         {% csrf_token %}
         <label for="delete-favorite-submit">

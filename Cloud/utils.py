@@ -1,6 +1,6 @@
+import math
 import os
 import time
-import math
 
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
@@ -18,7 +18,7 @@ def get_files_and_dirs(path):
         if settings.SYSTEM == 'Windows' and os.stat(curr_path).st_file_attributes & 6 or \
                 settings.SYSTEM == 'Linux' and it[0] == '.':
             continue
-        objects.append(CloudObject(curr_path))
+        objects.append(CloudObject(path=curr_path))
 
     return sorted(objects)
 

@@ -30,8 +30,11 @@ class CloudObject(models.Model):
     is_file = models.BooleanField()
     ext = models.CharField(max_length=31)
 
-    def __init__(self, path, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        if "path" not in kwargs:
+            return
+        path = kwargs["path"]
         self._real_path = path
         self.path = path.replace(settings.STORAGE_DIRECTORY, "").replace('\\', '/')
         self.name = os.path.split(path)[1]

@@ -49,7 +49,7 @@ def open_dir(request, path=""):
     if os.path.isfile(file_path):
         raise SuspiciousOperation("Cannot open files")
     objects = get_files_and_dirs(file_path)
-    obj = CloudObject(file_path)
+    obj = CloudObject(path=file_path)
     return render(request, 'Cloud/cloud.html', context={
         "objects": objects,
         "name": obj.name,
@@ -94,7 +94,7 @@ def delete(path):
 def rename(path, name):
     name = os.path.join(os.path.split(path)[0], name)
     os.rename(path, name)
-    obj = CloudObject(name)
+    obj = CloudObject(path=name)
     return JsonResponse({
         "result": "ok",
         "abs_url": obj.get_absolute_url(),
@@ -117,7 +117,7 @@ def create_directory(path):
             path = os.path.join(file_path, f"Новая папка ({i})")
             i += 1
     os.mkdir(path)
-    obj = CloudObject(path)
+    obj = CloudObject(path=path)
     return JsonResponse({
         "result": "ok",
         "name": obj.name,
@@ -141,7 +141,7 @@ def upload(path, files):
         with open(file_path, "wb+") as destination:
             for chunk in file.chunks():
                 destination.write(chunk)
-        obj = CloudObject(file_path)
+        obj = CloudObject(path=file_path)
         result["files"].append({
             "name": obj.name,
             "img": "/static/" + obj.get_icon(),

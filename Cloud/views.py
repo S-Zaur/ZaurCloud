@@ -49,7 +49,7 @@ def open_dir(request, path=""):
     if os.path.isfile(file_path):
         raise SuspiciousOperation("Cannot open files")
     objects = get_files_and_dirs(file_path)
-    obj = CloudObject(path=file_path)
+    obj = CloudObject(real_path=file_path)
     return render(request, 'Cloud/cloud/index.html', context={
         "objects": objects,
         "name": obj.name,

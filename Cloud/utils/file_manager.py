@@ -49,7 +49,7 @@ def delete(path):
 def rename(path, name):
     name = os.path.join(os.path.split(path)[0], name)
     os.rename(path, name)
-    obj = CloudObject(path=name)
+    obj = CloudObject(real_path=name)
     return JsonResponse({
         "result": "ok",
         "abs_url": obj.get_absolute_url(),
@@ -72,7 +72,7 @@ def create_directory(path):
             path = os.path.join(file_path, f"Новая папка ({i})")
             i += 1
     os.mkdir(path)
-    obj = CloudObject(path=path)
+    obj = CloudObject(real_path=path)
     return JsonResponse({
         "result": "ok",
         "name": obj.name,
@@ -96,7 +96,7 @@ def upload(path, files):
         with open(file_path, "wb+") as destination:
             for chunk in file.chunks():
                 destination.write(chunk)
-        obj = CloudObject(path=file_path)
+        obj = CloudObject(real_path=file_path)
         result["files"].append({
             "name": obj.name,
             "img": "/static/" + obj.get_icon(),

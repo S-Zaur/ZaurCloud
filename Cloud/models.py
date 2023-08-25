@@ -24,7 +24,7 @@ ICONS = {
 
 
 class CloudObject(models.Model):
-    _real_path = models.CharField(max_length=1023)
+    real_path = models.CharField(max_length=1023)
     path = models.CharField(max_length=1023)
     name = models.CharField(max_length=255)
     is_file = models.BooleanField()
@@ -32,10 +32,10 @@ class CloudObject(models.Model):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if "path" not in kwargs:
+        if "real_path" not in kwargs:
             return
-        path = kwargs["path"]
-        self._real_path = path
+        path = kwargs["real_path"]
+        self.real_path = path
         self.path = path.replace(settings.STORAGE_DIRECTORY, "").replace('\\', '/')
         self.name = os.path.split(path)[1]
         self.is_file = os.path.isfile(path)

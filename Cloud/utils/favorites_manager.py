@@ -1,15 +1,10 @@
-from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
 
 from Cloud.models import CloudObject, Favorites
 
 
 def add_favorite(path, user):
-    try:
-        co = CloudObject.objects.get(_real_path=path)
-    except ObjectDoesNotExist:
-        co = CloudObject(path=path)
-        co.save()
+    co, _ = CloudObject.objects.get_or_create(real_path=path)
     fv, created = Favorites.objects.get_or_create(obj=co, user=user)
     if not created:
         return JsonResponse({"result": "Already added"})
@@ -18,5 +13,5 @@ def add_favorite(path, user):
 
 def delete_favorite(path, user):
     (Favorites.objects.filter(user_id=user.id) & Favorites.objects.filter(
-        obj___real_path=path)).delete()
+        obj__real_path=path)).delete()
     return JsonResponse({"result": "ok"})

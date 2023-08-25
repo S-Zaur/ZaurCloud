@@ -1,6 +1,7 @@
 import math
 import os
 import time
+import urllib.parse
 
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
@@ -93,3 +94,7 @@ def convert_size(size_bytes):
     p = math.pow(1024, i)
     s = round(size_bytes / p, 2)
     return f"{s} {size_name[i]}" if i == 0 else f"{s} {size_name[i]} ({size_bytes} B)"
+
+
+def parse_url(url):
+    return os.path.normpath(os.path.join(settings.STORAGE_DIRECTORY, urllib.parse.unquote(url)))

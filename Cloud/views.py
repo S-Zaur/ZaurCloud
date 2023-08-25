@@ -1,51 +1,42 @@
 import os
 import urllib.parse
 
-from django.conf import settings
 from django.core.exceptions import SuspiciousOperation
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
-import Cloud.utils.favorites_manager as fav_m
-import Cloud.utils.file_manager as fm
 from Cloud.models import CloudObject
-from Cloud.utils.core import get_files_and_dirs, check_permissions
+from Cloud.utils import favorites_manager
+from Cloud.utils import file_manager
+from Cloud.utils.core import get_files_and_dirs, check_permissions, parse_url
 
 
 @check_permissions
 def open_dir(request, path=""):
-    file_path = os.path.normpath(os.path.join(settings.STORAGE_DIRECTORY, path))
     if request.method == "POST":
         if "action" not in request.POST:
             raise SuspiciousOperation
         action = request.POST["action"]
-        file_path = urllib.parse.unquote(request.POST["url"])
-        file_path = os.path.normpath(os.path.join(settings.STORAGE_DIRECTORY, file_path))
+        file_path = parse_url(request.POST["url"])
         if action == "Delete":
-            return fm.delete(file_path)
+            return file_manager.delete(file_path)
         if action == "Rename":
-            return fm.rename(file_path, request.POST["new-name"])
+            return file_manager.rename(file_path, request.POST["new-name"])
         if action == "CreateDirectory":
             if "in-place" in request.POST:
                 file_path = os.path.join(file_path, "HelloWorld")
-            return fm.create_directory(file_path)
+            return file_manager.create_directory(file_path)
         if action == "Upload":
-            return fm.upload(file_path, request.FILES)
+            return file_manager.upload(file_path, request.FILES)
         if action == "AddFav":
-            return fav_m.add_favorite(file_path, request.user)
+            return favorites_manager.add_favorite(file_path, request.user)
 
         raise SuspiciousOperation
 
     if "action" in request.GET:
-        action = request.GET["action"]
-        file_path = urllib.parse.unquote(request.GET["url"])
-        file_path = os.path.normpath(os.path.join(settings.STORAGE_DIRECTORY, file_path))
-        if action == "Download":
-            return fm.download(file_path)
-        if action == "Properties":
-            return fm.properties(file_path)
-        raise SuspiciousOperation
+        return default_get_actions(request.GET["action"], request.GET["url"])
 
+    file_path = parse_url(path)
     if os.path.isfile(file_path):
         raise SuspiciousOperation("Cannot open files")
     objects = get_files_and_dirs(file_path)
@@ -63,24 +54,14 @@ def favorites(request):
         if "action" not in request.POST:
             raise SuspiciousOperation
         action = request.POST["action"]
-        file_path = urllib.parse.unquote(request.POST["url"])
-        file_path = os.path.normpath(os.path.join(settings.STORAGE_DIRECTORY, file_path))
+        file_path = parse_url(request.POST["url"])
         if action == "DeleteFav":
-            return fav_m.delete_favorite(file_path, request.user)
+            return favorites_manager.delete_favorite(file_path, request.user)
         raise SuspiciousOperation
+
     if "action" in request.GET:
-        action = request.GET["action"]
-        if action == "GoTo":
-            url = urllib.parse.unquote(request.GET["url"])
-            url = os.path.split(url)[0][1:]
-            return redirect(reverse("open_dir", args=[url]))
-        file_path = urllib.parse.unquote(request.GET["url"])
-        file_path = os.path.normpath(os.path.join(settings.STORAGE_DIRECTORY, file_path))
-        if action == "Download":
-            return fm.download(file_path)
-        if action == "Properties":
-            return fm.properties(file_path)
-        raise SuspiciousOperation
+        return default_get_actions(request.GET["action"], request.GET["url"])
+
     objects = CloudObject.objects.filter(
         favorites__user_id=request.user.id
     )
@@ -88,3 +69,15 @@ def favorites(request):
         "objects": objects,
         "name": "Избранное",
     })
+
+
+def default_get_actions(action, url):
+    if action == "GoTo":
+        url = os.path.split(urllib.parse.unquote(url))[0]
+        return redirect(reverse("open_dir", args=[url]))
+    file_path = parse_url(url)
+    if action == "Download":
+        return file_manager.download(file_path)
+    if action == "Properties":
+        return file_manager.properties(file_path)
+    raise SuspiciousOperation

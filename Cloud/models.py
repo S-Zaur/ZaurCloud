@@ -59,7 +59,7 @@ class CloudObject(models.Model):
 
     def get_rel_url(self):
         path = reverse('open_dir', args=[self.path]) if self.path != "" else reverse('index')
-        return path[path.find('/', 1):]
+        return path[path.find('/', 1) + 1:]
 
     def get_icon(self):
         if not self.is_file:

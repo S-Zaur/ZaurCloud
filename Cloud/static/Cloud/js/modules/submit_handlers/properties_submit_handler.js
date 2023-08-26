@@ -8,16 +8,21 @@ export function propertiesSubmitHandler(e) {
         data: $("#properties-form").serialize(),
         dataType: "json",
         success: function (data) {
-            const table = $('#propertiesTable')
-            table.find('tbody').empty();
+            const tbody = $("<tbody>")
             for (const [key, value] of Object.entries(data)) {
-                table.find('tbody')
+                tbody
                     .append($('<tr>')
                         .append($('<td>')
                             .text(key)).append($('<td>')
                             .text(value)));
             }
-            $("#propertiesModal").modal('show');
+            const table = $("<table>")
+                .addClass("table")
+                .append(tbody)
+            const body = $("#modal-body")
+            body.empty()
+            body.append(table)
+            $("#modal").modal('show');
         },
         statusCode: STATUS_CODES,
     });

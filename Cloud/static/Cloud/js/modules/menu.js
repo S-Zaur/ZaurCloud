@@ -34,6 +34,19 @@ export function addMenu() {
     }, false);
 }
 
+export function addSharedMenu() {
+    mainContainer.addEventListener('contextmenu', function (e) {
+        let link = $("#grid").attr("data-uuid")
+        if (currentElem != null) {
+            link = currentElem.firstElementChild.dataset.uuid;
+        }
+        let uuids = document.getElementsByClassName("form-uuid")
+        Array.prototype.forEach.call(uuids, function (uuid_input) {
+            uuid_input.value = link;
+        });
+    })
+}
+
 function openMenu(x, y) {
     if (y + menu.offsetHeight > document.documentElement.clientHeight) y -= menu.offsetHeight;
     if (x + menu.offsetWidth > document.documentElement.clientWidth) x -= menu.offsetWidth;

@@ -80,6 +80,15 @@
         <input id="action-id" type="hidden" name="action" value="AddFav">
         <input id="add-to-favorite-submit" type="submit" value="Добавить в избранное"/>
     </form>
+    <form method="post" id="share-form">
+        {% csrf_token %}
+        <label for="share-submit">
+            <img src="{% static 'Cloud/images/menu_icons/share.png' %}" alt="share"/>
+        </label>
+        <input type="hidden" name="url" value="" class="form-url">
+        <input id="action-id" type="hidden" name="action" value="Share">
+        <input id="share-submit" type="submit" value="Поделиться"/>
+    </form>
 </div>
 {% load static %}
 <link rel="stylesheet" type="text/css" href="{% static 'Cloud/styles/menu.css' %}">

@@ -2,12 +2,13 @@ import os
 import urllib.parse
 
 from django.core.exceptions import SuspiciousOperation
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 
-from Cloud.models import CloudObject
+from Cloud.models import CloudObject, Shared
 from Cloud.utils import favorites_manager
 from Cloud.utils import file_manager
+from Cloud.utils import share_manager
 from Cloud.utils.core import get_files_and_dirs, check_permissions, parse_url
 
 
@@ -30,7 +31,8 @@ def open_dir(request, path=""):
             return file_manager.upload(file_path, request.FILES)
         if action == "AddFav":
             return favorites_manager.add_favorite(file_path, request.user)
-
+        if action == "Share":
+            return share_manager.share(file_path)
         raise SuspiciousOperation
 
     if "action" in request.GET:
@@ -81,3 +83,46 @@ def default_get_actions(action, url):
     if action == "Properties":
         return file_manager.properties(file_path)
     raise SuspiciousOperation
+
+
+@check_permissions
+def shared_all(request):
+    if request.method == "POST" or "action" in request.GET:
+        return shared_actions(request)
+    objects = Shared.objects.filter(parent=None)
+    return render(request, 'Cloud/shared/index.html', context={
+        "objects": objects,
+        "name": "Общее",
+    })
+
+
+def shared(request, uuid):
+    if request.method == "POST" or "action" in request.GET:
+        return shared_actions(request)
+    objects = get_object_or_404(Shared, uuid=uuid)
+    if not objects.obj.is_file:
+        objects = Shared.objects.filter(parent_id=uuid)
+        return render(request, 'Cloud/shared/index.html', context={
+            "objects": objects,
+            "name": CloudObject.objects.get(shared__uuid=uuid).name,
+            "uuid": uuid
+        })
+    return render(request, 'Cloud/shared/index.html', context={
+        "objects": [objects],
+        "name": objects.obj.name,
+        "uuid": uuid
+    })
+
+
+def shared_actions(request):
+    if request.method == "POST":
+        if "action" not in request.POST:
+            raise SuspiciousOperation
+        action = request.POST["action"]
+        file_path = parse_url(CloudObject.objects.get(shared__uuid=request.POST["uuid"]).path)
+        if action == "Unshare":
+            return share_manager.unshare(file_path)
+        raise SuspiciousOperation
+    if "action" in request.GET:
+        return default_get_actions(request.GET["action"],
+                                   CloudObject.objects.get(shared__uuid=request.GET["uuid"]).path)

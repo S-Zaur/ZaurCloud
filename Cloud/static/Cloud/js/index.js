@@ -5,6 +5,7 @@ import {addCreateDirectoryEventListeners} from "./modules/submit_handlers/create
 import {addDeleteEventListeners} from "./modules/submit_handlers/delete_submit_handler.js";
 import {addPropertiesEventListeners} from "./modules/submit_handlers/properties_submit_handler.js";
 import {addRenameEventListeners} from "./modules/submit_handlers/rename_submit_handler.js";
+import {addShareEventListeners} from "./modules/submit_handlers/share_submit_handler.js";
 
 $(document).ready(function () {
     addMenu();
@@ -14,4 +15,5 @@ $(document).ready(function () {
     addDeleteEventListeners();
     addPropertiesEventListeners();
     addRenameEventListeners();
+    addShareEventListeners();
 })

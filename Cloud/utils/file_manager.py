@@ -8,7 +8,7 @@ import zipfile
 from django.conf import settings
 from django.http import HttpResponse, JsonResponse
 
-from Cloud.models import CloudObject
+from Cloud.models import CloudObject, Clipboard
 from Cloud.utils.core import check_exists, get_dir_size, get_properties
 
 
@@ -102,5 +102,52 @@ def upload(path, files):
             "img": "/static/" + obj.get_icon(),
             "rel_url": obj.get_rel_url(),
         })
+    result["result"] = "ok"
+    return JsonResponse(result)
+
+
+@check_exists
+def copy(path, cut, user):
+    Clipboard.objects.filter(user_id=user.id).delete()
+
+    co, _ = CloudObject.objects.get_or_create(real_path=path)
+    Clipboard.objects.create(obj=co, user=user, cut=cut)
+    return JsonResponse({"result": "ok"})
+
+
+@check_exists
+def paste(path, user):
+    co = Clipboard.objects.filter(user_id=user.id)
+    if len(co) == 0:
+        return JsonResponse({"result": "ok", "files": []})
+    result = {"files": []}
+    for obj in co:
+        if os.path.exists(os.path.join(path, obj.obj.name)):
+            result["files"].append({
+                "name": obj.obj.name,
+                "exists": "true"
+            })
+            continue
+        if obj.obj.is_file:
+            shutil.copy2(obj.obj.real_path, path)
+            result["files"].append({
+                "name": obj.obj.name,
+                "img": "/static/" + obj.obj.get_icon(),
+                "rel_url": obj.obj.get_rel_url(),
+            })
+        else:
+            new_path = shutil.copytree(obj.obj.real_path, os.path.join(path, obj.obj.name))
+            co, _ = CloudObject.objects.get_or_create(real_path=new_path)
+            result["files"].append({
+                "name": co.name,
+                "img": "/static/" + co.get_icon(),
+                "rel_url": co.get_rel_url(),
+                "abs_url": co.get_absolute_url() if not co.is_file else None
+            })
+        if obj.cut:
+            if obj.obj.is_file:
+                os.remove(obj.obj.real_path)
+            else:
+                shutil.rmtree(obj.obj.real_path)
     result["result"] = "ok"
     return JsonResponse(result)

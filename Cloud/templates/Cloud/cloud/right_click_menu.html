@@ -9,25 +9,27 @@
         <input id="action-id" type="hidden" name="action" value="Download">
         <input id="download-submit" type="submit" value="Скачать"/>
     </form>
-    <form method="post">
+    <form method="post" id="copy-form">
         {% csrf_token %}
         <label for="copy-submit">
             <img src="{% static 'Cloud/images/menu_icons/copy.png' %}" alt="copy"/>
         </label>
         <input type="hidden" name="url" value="" class="form-url">
+        <input type="hidden" name="cut" value="False">
         <input id="action-id" type="hidden" name="action" value="Copy">
         <input id="copy-submit" type="submit" value="Копировать"/>
     </form>
-    <form method="post">
+    <form method="post" id="cut-form">
         {% csrf_token %}
         <label for="cut-submit">
             <img src="{% static 'Cloud/images/menu_icons/cut.png' %}" alt="cut"/>
         </label>
         <input type="hidden" name="url" value="" class="form-url">
-        <input id="action-id" type="hidden" name="action" value="Cut">
+        <input type="hidden" name="cut" value="True">
+        <input id="action-id" type="hidden" name="action" value="Copy">
         <input id="cut-submit" type="submit" value="Вырезать"/>
     </form>
-    <form method="post">
+    <form method="post" id="paste-form">
         {% csrf_token %}
         <label for="paste-submit">
             <img src="{% static 'Cloud/images/menu_icons/paste.png' %}" alt="paste"/>

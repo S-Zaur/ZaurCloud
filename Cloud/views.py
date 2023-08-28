@@ -33,6 +33,10 @@ def open_dir(request, path=""):
             return favorites_manager.add_favorite(file_path, request.user)
         if action == "Share":
             return share_manager.share(file_path)
+        if action == "Copy":
+            return file_manager.copy(file_path, request.POST["cut"], request.user)
+        if action == "Paste":
+            return file_manager.paste(file_path, request.user)
         raise SuspiciousOperation
 
     if "action" in request.GET:

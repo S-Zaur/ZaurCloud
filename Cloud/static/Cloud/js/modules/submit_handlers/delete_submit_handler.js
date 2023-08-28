@@ -1,4 +1,3 @@
-import {toast} from "../toast.js";
 import {currentElem} from "../menu.js";
 import {STATUS_CODES} from "../consts.js";
 
@@ -10,7 +9,6 @@ function deleteSubmitHandler(e) {
         data: $("#delete-form").serialize(),
         dataType: "json",
         success: function (data) {
-            toast("Удалено");
             currentElem.remove();
         },
         statusCode: STATUS_CODES,

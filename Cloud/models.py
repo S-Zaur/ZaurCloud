@@ -80,3 +80,9 @@ class Shared(models.Model):
 
     def get_absolute_url(self):
         return reverse('shared', args=[self.uuid])
+
+
+class Clipboard(models.Model):
+    obj = models.ForeignKey(CloudObject, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    cut = models.BooleanField(default=False)

@@ -1,0 +1,59 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="{% static 'celery_progress/celery_progress.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
+</head>
+<body>
+<form method="get" id="properties-form">
+    {% csrf_token %}
+    <label>
+        path
+        <input type="text" name="path" value="">
+    </label>
+    <label>
+        url
+        <input type="text" name="url" value="">
+    </label>
+    <input id="properties-submit" type="submit" value="Свойства"/>
+</form>
+{% if task_id %}
+    <div id="progress-bar-message">Waiting for progress to start...</div>
+    <div id="celery-result"></div>
+    <button id="baton">Кнопка с текстом</button>
+    <script>
+        let progressUrl = "{% url 'celery_progress:task_status' task_id %}";
+
+        function customResult(resultElement, result) {
+            $(resultElement).append(
+                $('<p>').text("Скачано")
+            );
+        }
+
+        function customProgress(progressBarElement, progressBarMessageElement, progress) {
+            const description = progress.description || "";
+            if (progress.current === 0) {
+                if (progress.pending === true) {
+                    progressBarMessageElement.textContent = this.messages.waiting;
+                } else {
+                    progressBarMessageElement.textContent = this.messages.started;
+                }
+            } else {
+                progressBarMessageElement.textContent = progress.current + description;
+            }
+        }
+
+        $(function () {
+            CeleryProgressBar.initProgressBar(progressUrl, {
+                onResult: customResult,
+                onProgress: customProgress,
+                pollInterval: 1000,
+            })
+        })
+    </script>
+{% endif %}
+</body>
+</html>

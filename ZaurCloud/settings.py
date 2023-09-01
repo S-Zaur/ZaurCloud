@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-5jxhh((7f&!ug4=)&zcw-ermj=9ht+$#+bu0#+d!_x#9vpne)f
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '192.168.145.85']
+ALLOWED_HOSTS = ['127.0.0.1', '192.168.145.85', '192.168.1.42']
 
 # Application definition
 
@@ -37,7 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_celery_results',
+    'celery_progress',
     'Cloud',
+    'Loader',
 ]
 
 MIDDLEWARE = [
@@ -125,6 +128,13 @@ STATICFILES_DIRS = (
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Celery settings
+
+CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_RESULT_BACKEND = 'db+sqlite:///db.sqlite3'
+CELERY_TASK_SERIALIZER = 'json'
 
 LOGIN_REDIRECT_URL = '/cloud'
 

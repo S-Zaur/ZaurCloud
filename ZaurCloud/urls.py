@@ -23,4 +23,5 @@ urlpatterns = [
     path('cloud/', include("Cloud.urls")),
     path('downloader/', include("Loader.urls")),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('pokemons/', include('Pokemons.urls')),
 ]

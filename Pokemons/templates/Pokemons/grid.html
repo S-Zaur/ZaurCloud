@@ -1,0 +1,15 @@
+{% load static %}
+<div id="grid" data-url="{{ url }}" data-name="{{ name }}"
+     class="grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6 p-2">
+    {% for object in objects.results %}
+        <div class="col d-flex align-items-stretch mb-3">
+            <div class="card" data-url="{{ object.get_rel_url }}">
+                <img src="" draggable="false"
+                     class="card-img-top img-fluid img-thumbnail" alt="Pokemon">
+                <div class="card-body">
+                    <h5 class="card-title">{{ object.name }}</h5>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+</div>

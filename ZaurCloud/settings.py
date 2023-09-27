@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'celery_progress',
     'Cloud',
     'Loader',
+    'Pokemons',
 ]
 
 MIDDLEWARE = [
@@ -140,6 +141,6 @@ LOGIN_REDIRECT_URL = '/cloud'
 
 SYSTEM = platform.system()
 
-STORAGE_DIRECTORY = 'D:\\'
+STORAGE_DIRECTORY = 'C:\\Users\\zaurs'
 
 locale.setlocale(locale.LC_ALL, "ru")

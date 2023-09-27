@@ -1,6 +1,6 @@
 from django.urls import path
 
-from . import views
+from Pokemons import views
 
 urlpatterns = [
     path("", views.index, name="index"),

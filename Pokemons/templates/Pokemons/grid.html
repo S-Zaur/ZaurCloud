@@ -1,15 +1,28 @@
 {% load static %}
-<div id="grid" data-url="{{ url }}" data-name="{{ name }}"
-     class="grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6 p-2">
-    {% for object in objects.results %}
-        <div class="col d-flex align-items-stretch mb-3">
-            <div class="card" data-url="{{ object.get_rel_url }}">
-                <img src="" draggable="false"
-                     class="card-img-top img-fluid img-thumbnail" alt="Pokemon">
-                <div class="card-body">
-                    <h5 class="card-title">{{ object.name }}</h5>
+<div class="d-flex flex-column">
+    <div id="grid" data-url="{{ url }}" data-name="{{ name }}"
+         class="grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6 p-2">
+        {% for object in objects %}
+            <div class="col d-flex align-items-stretch mb-3">
+                <div class="card w-100">
+                    <img draggable="false"
+                         src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{{ object.id }}.png"
+                         class="card-img-top img-fluid img-thumbnail" alt="Pokemon">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ object.name }}</h5>
+                    </div>
                 </div>
             </div>
-        </div>
-    {% endfor %}
+        {% endfor %}
+    </div>
+    <div class="d-flex justify-content-between">
+        <button type="button" class="btn {% if prev %}btn-primary{% else %}btn-secondary{% endif %} mx-4"
+                {% if not prev %}disabled{% endif %}
+                onclick="window.location.href = window.location.href.split('?')[0] + '?{{ prev }}'">Предыдущая страница
+        </button>
+        <button type="button" class="btn {% if next %}btn-primary{% else %}btn-secondary{% endif %} mx-4"
+                {% if not next %}disabled{% endif %}
+                onclick="window.location.href = window.location.href.split('?')[0] + '?{{ next }}'">Следующая страница
+        </button>
+    </div>
 </div>

@@ -13,14 +13,7 @@
 <body>
 {% include "Cloud/nav.html" %}
 {% if poke %}
-    <div>
-        <div>name: {{ result.name }}</div>
-        <div>species: {{ result.species.name }}</div>
-        <div>hp: {{ result.stats.0.base_stat }}</div>
-        <div>attack: {{ result.stats.1.base_stat }}</div>
-        <div>defense: {{ result.stats.3.base_stat }}</div>
-        <div>type: {{ result.types.0.type.name }}</div>
-    </div>
+    {% include 'Pokemons/poke.html' %}
 {% else %}
     <div class="d-flex flex-row flex-grow-1">
         <div class="position-relative w-100" id="main-container"

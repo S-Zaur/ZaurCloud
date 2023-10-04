@@ -12,10 +12,16 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 import locale
 import os
 import platform
+from dotenv import load_dotenv
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_DIR = os.path.dirname(__file__)
+
+DOTENV_PATH = os.path.join(BASE_DIR, '.env')
+if os.path.exists(DOTENV_PATH):
+    load_dotenv(DOTENV_PATH)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
@@ -26,7 +32,7 @@ SECRET_KEY = 'django-insecure-5jxhh((7f&!ug4=)&zcw-ermj=9ht+$#+bu0#+d!_x#9vpne)f
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '192.168.145.85', '192.168.1.42']
+ALLOWED_HOSTS = ['127.0.0.1', '192.168.145.85', '192.168.31.42']
 
 # Application definition
 
@@ -78,13 +84,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ZaurCloud.wsgi.application'
 
-# Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv("POSTGRES_DB"),
+        'USER': os.getenv("POSTGRES_USER"),
+        'PASSWORD': os.getenv("POSTGRES_PASSWORD"),
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 

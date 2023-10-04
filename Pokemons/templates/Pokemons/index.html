@@ -7,20 +7,19 @@
     <link rel="shortcut icon" type="image/ico" href="{% static 'images/favicon.ico' %}">
     <script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
-    <script type="module" src="{% static 'Cloud/js/index.js' %}"></script>
+    <script type="module" src="{% static 'Pokemons/js/index.js' %}"></script>
 </head>
 
 <body>
 {% include "Cloud/nav.html" %}
-{% if poke %}
-    {% include 'Pokemons/poke.html' %}
-{% else %}
-    <div class="d-flex flex-row flex-grow-1">
-        <div class="position-relative w-100" id="main-container"
-             style="height:calc(100vh - 70px);overflow: auto;overflow-x: hidden">
-            {% include 'Pokemons/grid.html' %}
-        </div>
+<div class="d-flex flex-row flex-grow-1">
+    <div class="position-relative w-100" id="main-container"
+         style="height:calc(100vh - 70px);overflow: auto;overflow-x: hidden">
+        {% include 'Pokemons/grid.html' %}
     </div>
-{% endif %}
+</div>
+{% include "Cloud/modal.html" %}
+{% include 'Cloud/toast.html' %}
+{% include "Pokemons/right_click_menu.html" %}
 </body>
 </html>

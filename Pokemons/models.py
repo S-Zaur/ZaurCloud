@@ -8,6 +8,8 @@ from django.db import models
 class Pokemon:
     id: int
     name: str
+    hp: int = None
+    attack: int = None
     is_default: bool = None
     base_experience: int = None
     height: int = None

@@ -1,19 +1,17 @@
-from django.http import Http404
+from django.http import JsonResponse
 from django.shortcuts import render
 import requests as r
 
-from Pokemons.models import Pokemon
+from Pokemons.pokemon_utils import parce_pokemons, get_pokemon
 
-
-# Create your views here.
 
 def index(request):
+    if "action" in request.GET:
+        if request.GET["action"] == "Properties":
+            return JsonResponse(get_pokemon(request.GET["name"]).__dict__)
     if "name" in request.GET:
-        response = r.get('https://pokeapi.co/api/v2/pokemon/' + request.GET["name"])
-        if response.status_code == 404:
-            raise Http404
-        poke = parce_pokemon(response.json())
-        return render(request, 'Pokemons/index.html', context={"poke": poke})
+        poke = get_pokemon(request.GET["name"])
+        return render(request, 'Pokemons/index.html', context={"objects": [poke]})
     payload = {'limit': 100, 'offset': 0}
     if "limit" in request.GET:
         payload['limit'] = request.GET['limit']
@@ -24,22 +22,3 @@ def index(request):
     return render(request, 'Pokemons/index.html',
                   context={"objects": pokemons, 'next': response['next'].split('?')[1] if response['next'] else None,
                            'prev': response['previous'].split('?')[1] if response['previous'] else None})
-
-
-def parce_pokemons(json):
-    pokemons = []
-    for poke in json:
-        pokemons.append(Pokemon(id=poke['url'].split('/')[-2], name=poke['name']))
-    return pokemons
-
-
-def parce_pokemon(json):
-    return Pokemon(
-        id=json['id'],
-        name=json['name'],
-        is_default=json['is_default'],
-        base_experience=json['base_experience'],
-        height=json['height'],
-        weight=json['weight'],
-        species=json['species']['name'],
-    )

@@ -1,0 +1,14 @@
+{% load static %}
+<div id="menu">
+    <form method="get" id="properties-form">
+        {% csrf_token %}
+        <label for="properties-submit">
+            <img src="{% static 'Cloud/images/menu_icons/about.png' %}" alt="about"/>
+        </label>
+        <input type="hidden" name="name" value="" class="form-name">
+        <input id="action-id" type="hidden" name="action" value="Properties">
+        <input id="properties-submit" type="submit" value="Свойства"/>
+    </form>
+</div>
+{% load static %}
+<link rel="stylesheet" type="text/css" href="{% static 'Cloud/styles/menu.css' %}">

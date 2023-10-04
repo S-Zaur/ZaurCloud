@@ -61,6 +61,7 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             os.path.join(BASE_DIR, 'Cloud', 'templates'),
+            os.path.join(BASE_DIR, 'Pokemons', 'templates'),
             os.path.join(BASE_DIR, 'templates'),
         ],
         'APP_DIRS': True,
@@ -123,6 +124,7 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
     os.path.join(BASE_DIR, 'Cloud', 'static'),
+    os.path.join(BASE_DIR, 'Pokemons', 'static'),
 )
 
 # Default primary key field type

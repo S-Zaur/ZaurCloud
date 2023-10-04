@@ -1,10 +1,9 @@
 {% load static %}
 <div class="d-flex flex-column">
-    <div id="grid" data-url="{{ url }}" data-name="{{ name }}"
-         class="grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6 p-2">
+    <div id="grid" class="grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6 p-2">
         {% for object in objects %}
             <div class="col d-flex align-items-stretch mb-3">
-                <div class="card w-100">
+                <div class="card w-100" data-name="{{ object.name }}">
                     <img draggable="false"
                          src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{{ object.id }}.png"
                          class="card-img-top img-fluid img-thumbnail" alt="Pokemon">

@@ -12,8 +12,9 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 import locale
 import os
 import platform
-from dotenv import load_dotenv
 
+from django.utils.timezone import activate
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -121,6 +122,7 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'Asia/Yekaterinburg'
+activate(TIME_ZONE)
 
 USE_I18N = True
 

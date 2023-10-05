@@ -1,17 +1,32 @@
-from dataclasses import dataclass
-
+import json
+from dataclasses import dataclass, asdict
+from django.conf import settings
 from django.db import models
 
 
-# Create your models here.
 @dataclass
 class Pokemon:
     id: int
     name: str
     hp: int = None
     attack: int = None
+    defense: int = None
     is_default: bool = None
     base_experience: int = None
     height: int = None
     weight: int = None
     species: str = None
+
+    def __str__(self):
+        return self.name
+
+    def to_json(self):
+        return json.dumps(asdict(self))
+
+
+class Battle(models.Model):
+    player_pokemon = models.TextField()
+    opponent_pokemon = models.TextField()
+    result = models.BooleanField()
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
+    battle_date = models.DateTimeField()

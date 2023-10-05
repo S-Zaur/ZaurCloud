@@ -11,7 +11,9 @@
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
                     <form class="d-flex" role="search">
-                        <input class="form-control me-2" type="search" placeholder="Search" name="name" aria-label="Search">
+                        <input id="action-id" type="hidden" name="action" value="Search">
+                        <input class="form-control me-2" type="search" placeholder="Search" name="name"
+                               aria-label="Search">
                         <button class="btn btn-outline-success" type="submit">Search</button>
                     </form>
                 </li>
@@ -19,7 +21,7 @@
             <form class="d-flex">
                 <button class="btn btn-outline-success me-2" type="button"
                         {% if request.user.is_authenticated %}
-                            onclick="window.location='{% url 'logout' %}';">Logout
+                        onclick="window.location='{% url 'logout' %}';">Logout
                         {% else %}
                             onclick="window.location='{% url 'login' %}';">Login
                         {% endif %}

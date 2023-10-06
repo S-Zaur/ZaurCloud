@@ -44,10 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_celery_results',
-    'celery_progress',
     'Cloud',
-    'Loader',
     'Pokemons',
 ]
 
@@ -142,13 +139,6 @@ STATICFILES_DIRS = (
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# Celery settings
-
-CELERY_BROKER_URL = 'redis://localhost:6379'
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_RESULT_BACKEND = 'db+sqlite:///db.sqlite3'
-CELERY_TASK_SERIALIZER = 'json'
 
 LOGIN_REDIRECT_URL = '/cloud'
 

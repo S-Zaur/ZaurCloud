@@ -10,7 +10,7 @@ def share(path):
     co, _ = CloudObject.objects.get_or_create(real_path=path)
     res, _ = Shared.objects.get_or_create(obj_id=co.id)
     if co.is_file:
-        return JsonResponse({"result": "ok", "url": reverse("shared", args=[res.uuid])})
+        return JsonResponse({"result": "ok", "url": reverse("Cloud.shared", args=[res.uuid])})
     for addr, dirs, files in os.walk(path):
         s = Shared.objects.get(obj__real_path=addr)
         for directory in dirs:
@@ -19,7 +19,7 @@ def share(path):
         for file in files:
             co, _ = CloudObject.objects.get_or_create(real_path=os.path.join(addr, file))
             Shared.objects.get_or_create(obj=co, parent=s)
-    return JsonResponse({"result": "ok", "url": reverse("shared", args=[res.uuid])})
+    return JsonResponse({"result": "ok", "url": reverse("Cloud.shared", args=[res.uuid])})
 
 
 def unshare(path):

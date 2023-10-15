@@ -14,7 +14,7 @@ def index(request):
         if request.GET["action"] == "Properties":
             return JsonResponse(get_pokemon(request.GET["name"]).__dict__)
         if request.GET["action"] == "Battle":
-            return redirect("battle", player_pokemon=request.GET["name"], opponent_pokemon=get_random_pokemon().name)
+            return redirect("Pokemons.battle", player_pokemon=request.GET["name"], opponent_pokemon=get_random_pokemon().name)
         if request.GET["action"] == "Search":
             poke = get_pokemon(request.GET["name"])
             return render(request, 'Pokemons/index.html', context={"objects": [poke]})
@@ -49,7 +49,7 @@ def battle(request, player_pokemon, opponent_pokemon):
             poke = get_pokemon(request.GET["name"])
             return render(request, 'Pokemons/index.html', context={"objects": [poke]})
         if request.GET["action"] == "Battle":
-            return redirect("battle", player_pokemon=request.GET["name"], opponent_pokemon=get_random_pokemon().name)
+            return redirect("Pokemons.battle", player_pokemon=request.GET["name"], opponent_pokemon=get_random_pokemon().name)
         if request.GET["action"] == "Revenge":
             pass
     return render(request, "Pokemons/battle.html",

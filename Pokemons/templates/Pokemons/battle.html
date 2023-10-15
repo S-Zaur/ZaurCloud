@@ -49,7 +49,7 @@
             <form method="get" id="battle-form" style="display: none">
                 {% csrf_token %}
                 <label for="battle-submit">
-                    <img id="battle-img" src="{% static 'Pokemons/images/battle_icon.png' %}" alt="download"/>
+                    <img id="battle-img" src="{% static 'Pokemons/images/battle_icon.png' %}" alt="battle"/>
                 </label>
                 <input type="hidden" name="name" value="{{ player.name }}">
                 <input id="action-id" type="hidden" name="action" value="Battle">
@@ -58,7 +58,7 @@
             <form method="get" id="revenge-form" style="display: none">
                 {% csrf_token %}
                 <label for="revenge-submit">
-                    <img src="{% static 'Pokemons/images/battle_icon.png' %}" alt="download"/>
+                    <img src="{% static 'Pokemons/images/battle_icon.png' %}" alt="revenge"/>
                 </label>
                 <input id="action-id" type="hidden" name="action" value="Revenge">
                 <input id="revenge-submit" type="submit" value="Взять реванш"/>
@@ -79,5 +79,6 @@
         </div>
     </div>
 </div>
+{% include "Cloud/toast.html" %}
 </body>
 </html>

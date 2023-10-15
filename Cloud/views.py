@@ -80,7 +80,7 @@ def favorites(request):
 def default_get_actions(action, url):
     if action == "GoTo":
         url = os.path.split(urllib.parse.unquote(url))[0]
-        return redirect(reverse("open_dir", args=[url]))
+        return redirect(reverse("Cloud.open_dir", args=[url]))
     file_path = parse_url(url)
     if action == "Download":
         return file_manager.download(file_path)

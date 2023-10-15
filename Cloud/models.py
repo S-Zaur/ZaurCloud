@@ -56,10 +56,10 @@ class CloudObject(models.Model):
         return self.name < other.name
 
     def get_absolute_url(self):
-        return reverse('open_dir', args=[self.path]) if self.path != "" else reverse('index')
+        return reverse('Cloud.open_dir', args=[self.path]) if self.path != "" else reverse('Cloud.index')
 
     def get_rel_url(self):
-        path = reverse('open_dir', args=[self.path]) if self.path != "" else reverse('index')
+        path = reverse('Cloud.open_dir', args=[self.path]) if self.path != "" else reverse('Cloud.index')
         return path[path.find('/', 1) + 1:]
 
     def get_icon(self):
@@ -79,7 +79,7 @@ class Shared(models.Model):
     obj = models.ForeignKey(CloudObject, on_delete=models.CASCADE)
 
     def get_absolute_url(self):
-        return reverse('shared', args=[self.uuid])
+        return reverse('Cloud.shared', args=[self.uuid])
 
 
 class Clipboard(models.Model):

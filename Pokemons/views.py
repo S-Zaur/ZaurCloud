@@ -1,4 +1,8 @@
 import json
+
+from django.conf import settings
+from django.core.exceptions import SuspiciousOperation
+from django.core.mail import get_connection, EmailMessage
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 import requests as r
@@ -14,7 +18,8 @@ def index(request):
         if request.GET["action"] == "Properties":
             return JsonResponse(get_pokemon(request.GET["name"]).__dict__)
         if request.GET["action"] == "Battle":
-            return redirect("Pokemons.battle", player_pokemon=request.GET["name"], opponent_pokemon=get_random_pokemon().name)
+            return redirect("Pokemons.battle", player_pokemon=request.GET["name"],
+                            opponent_pokemon=get_random_pokemon().name)
         if request.GET["action"] == "Search":
             poke = get_pokemon(request.GET["name"])
             return render(request, 'Pokemons/index.html', context={"objects": [poke]})
@@ -33,12 +38,18 @@ def index(request):
 @never_cache
 def battle(request, player_pokemon, opponent_pokemon):
     if request.method == "POST":
-        Battle.objects.create(player_pokemon=request.POST["player_pokemon"],
-                              opponent_pokemon=request.POST["opponent_pokemon"],
-                              result=request.POST["result"] == "WIN",
-                              user=request.user if request.user.is_authenticated else None,
-                              battle_date=timezone.localtime())
-        return JsonResponse({"result": "ok"})
+        if "action" not in request.POST:
+            raise SuspiciousOperation
+        if request.POST["action"] == "Result":
+            Battle.objects.create(player_pokemon=request.POST["player_pokemon"],
+                                  opponent_pokemon=request.POST["opponent_pokemon"],
+                                  result=request.POST["result"] == "WIN",
+                                  user=request.user if request.user.is_authenticated else None,
+                                  battle_date=timezone.localtime())
+            return JsonResponse({"result": "ok"})
+        if request.POST["action"] == "Email":
+            return send_email(request.user, "PokeBattle",
+                              f"ваш покемон {request.POST['player_pokemon']} встретился с {request.POST['opponent_pokemon']} в результате боя он {'победил' if request.POST['result'] == 'WIN' else 'проиграл'}")
     if "action" in request.GET:
         if request.GET["action"] == "Hit":
             player_pokemon = Pokemon(**json.loads(request.GET["player_pokemon"]))
@@ -49,8 +60,24 @@ def battle(request, player_pokemon, opponent_pokemon):
             poke = get_pokemon(request.GET["name"])
             return render(request, 'Pokemons/index.html', context={"objects": [poke]})
         if request.GET["action"] == "Battle":
-            return redirect("Pokemons.battle", player_pokemon=request.GET["name"], opponent_pokemon=get_random_pokemon().name)
+            return redirect("Pokemons.battle", player_pokemon=request.GET["name"],
+                            opponent_pokemon=get_random_pokemon().name)
         if request.GET["action"] == "Revenge":
             pass
     return render(request, "Pokemons/battle.html",
                   context={"player": get_pokemon(player_pokemon), "opponent": get_pokemon(opponent_pokemon)})
+
+
+def send_email(user, subject, message):
+    with get_connection(
+            host=settings.EMAIL_HOST,
+            port=settings.EMAIL_PORT,
+            username=settings.EMAIL_HOST_USER,
+            password=settings.EMAIL_HOST_PASSWORD,
+            use_tls=settings.EMAIL_USE_TLS
+    ) as connection:
+        email_from = settings.EMAIL_HOST_USER
+        recipient_list = [user.email, ]
+        EmailMessage(subject, message, email_from, recipient_list, connection=connection).send()
+
+    return JsonResponse({"result": "ok"})

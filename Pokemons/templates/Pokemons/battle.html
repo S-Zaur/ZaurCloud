@@ -29,9 +29,10 @@
         <div class="col d-flex flex-column align-items-center">
             <form method="post" id="result-form">
                 {% csrf_token %}
+                <input id="action-id" type="hidden" name="action" value="Result">
                 <input type="hidden" name="player_pokemon" value="{{ player.name }}">
                 <input type="hidden" name="opponent_pokemon" value="{{ opponent.name }}">
-                <input type="hidden" name="result" id="battle_result" value="">
+                <input type="hidden" name="result" class="battle_result" value="">
             </form>
             <form method="get" id="hit-form">
                 {% csrf_token %}
@@ -62,6 +63,17 @@
                 </label>
                 <input id="action-id" type="hidden" name="action" value="Revenge">
                 <input id="revenge-submit" type="submit" value="Взять реванш"/>
+            </form>
+            <form method="post" id="email-form" style="display: none">
+                {% csrf_token %}
+                <label for="email-submit">
+                    <img src="{% static 'Pokemons/images/mail.png' %}" alt="email"/>
+                </label>
+                <input type="hidden" name="player_pokemon" value="{{ player.name }}">
+                <input type="hidden" name="opponent_pokemon" value="{{ opponent.name }}">
+                <input type="hidden" name="result" class="battle_result" value="">
+                <input id="action-id" type="hidden" name="action" value="Email">
+                <input id="email-submit" type="submit" value="Отправить на почту"/>
             </form>
         </div>
         <div class="col d-flex align-items-stretch mb-3">

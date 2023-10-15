@@ -19,6 +19,7 @@ export function hitSubmitHandler(e) {
                     $("#battle-img").css("transform", "rotate(180deg)")
                     $("#hit-submit").attr("disabled", "disabled");
                     $("#battle-form").css("display", "block");
+                    $("#email-form").css("display", "block");
                     $("#revenge-form").css("display", "block");
                 }
             }
@@ -30,6 +31,7 @@ export function hitSubmitHandler(e) {
                     battle_log.append($("<div>").append($("<b>").append(document.createTextNode("Вы выиграли"))));
                     $("#hit-submit").attr("disabled", "disabled");
                     $("#battle-form").css("display", "block");
+                    $("#email-form").css("display", "block");
                 }
             }
         },
@@ -42,7 +44,7 @@ export function addHitEventListeners() {
 }
 
 function save(result) {
-    $("#battle_result").val(result);
+    $(".battle_result").val(result);
     $.ajax({
         type: "POST",
         url: window.location.href,

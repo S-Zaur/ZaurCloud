@@ -27,17 +27,17 @@
             </div>
         </div>
         <div class="col d-flex flex-column align-items-center">
-            <form method="post" id="result-form">
+            <form method="get" id="fast-fight-form">
                 {% csrf_token %}
-                <input id="action-id" type="hidden" name="action" value="Result">
-                <input type="hidden" name="player_pokemon" value="{{ player.name }}">
-                <input type="hidden" name="opponent_pokemon" value="{{ opponent.name }}">
-                <input type="hidden" name="result" class="battle_result" value="">
+                <input id="action-id" type="hidden" name="action" value="Fast">
+                <input type="hidden" name="player_pokemon" value="{{ player }}">
+                <input type="hidden" name="opponent_pokemon" value="{{ opponent }}">
+                <input id="fast-fight-submit" type="submit" value="Быстрый бой"/>
             </form>
             <form method="get" id="hit-form">
                 {% csrf_token %}
-                <input type="hidden" name="player_pokemon" id="player_pokemon" value="{{ player.to_json }}">
-                <input type="hidden" name="opponent_pokemon" id="opponent_pokemon" value="{{ opponent.to_json }}">
+                <input type="hidden" name="player_pokemon" id="player_pokemon" value="{{ player }}">
+                <input type="hidden" name="opponent_pokemon" id="opponent_pokemon" value="{{ opponent }}">
                 <label>
                     <input type="number" name="number" max="10" min="1" value="1" class="w-50 mx-auto">
                 </label>

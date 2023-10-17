@@ -1,7 +1,8 @@
 import random
+from django.utils import timezone
 from django.http import Http404
 from django.urls import reverse
-from Pokemons.models import Pokemon
+from Pokemons.models import Pokemon, FightResult
 import requests as r
 
 
@@ -71,17 +72,48 @@ def parce_pokemon(json):
     )
 
 
-def pokemons_battle(first_pokemon, second_pokemon, user_number):
+def fight_hit(player_pokemon: Pokemon, opponent_pokemon: Pokemon, user_number: int):
     rnd = random.randint(1, 10)
     if (user_number % 2) == (rnd % 2):
-        damage = int(max(first_pokemon.attack - second_pokemon.defense * (random.random() * 0.3 + 0.65), 0))
-        damage = damage if damage > 0 else random.randint(1, 10)
-        second_pokemon.hp = max(second_pokemon.hp - damage, 0)
-        return {"opponent_pokemon": second_pokemon.__dict__,
-                "description": f"{first_pokemon.name} бьет {second_pokemon.name} " f"и наносит {damage} урона"}
+        description = hit(player_pokemon, opponent_pokemon)
     else:
-        damage = int(max(second_pokemon.attack - first_pokemon.defense * (random.random() * 0.3 + 0.65), 0))
-        damage = damage if damage > 0 else random.randint(1, 10)
-        first_pokemon.hp = max(first_pokemon.hp - damage, 0)
-        return {"player_pokemon": first_pokemon.__dict__,
-                "description": f"{second_pokemon.name} бьет {first_pokemon.name} " f"и наносит {damage} урона"}
+        description = hit(opponent_pokemon, player_pokemon)
+    if player_pokemon.hp == 0 or opponent_pokemon.hp == 0:
+        FightResult.objects.create(player_pokemon=player_pokemon.name,
+                                   opponent_pokemon=opponent_pokemon.name,
+                                   result=opponent_pokemon.hp == 0,
+                                   battle_date=timezone.localtime())
+    return {
+        "player_pokemon": player_pokemon.to_json(),
+        "opponent_pokemon": opponent_pokemon.to_json(),
+        "description": description
+    }
+
+
+def hit(first_pokemon: Pokemon, second_pokemon: Pokemon):
+    damage = int(max(first_pokemon.attack - second_pokemon.defense * (random.random() * 0.3 + 0.65), 0))
+    damage = damage if damage > 0 else random.randint(1, 10)
+    second_pokemon.hp = max(second_pokemon.hp - damage, 0)
+    return f"{first_pokemon.name} бьет {second_pokemon.name} и наносит {damage} урона"
+
+
+def fight_start(player_pokemon, opponent_pokemon):
+    return {"player": get_pokemon(player_pokemon).to_json(), "opponent": get_pokemon(opponent_pokemon).to_json()}
+
+
+def fight_fast(player_pokemon: Pokemon, opponent_pokemon: Pokemon):
+    description_list = []
+    while player_pokemon.hp > 0 and opponent_pokemon.hp > 0:
+        if (random.randint(1, 10) % 2) == (random.randint(1, 10) % 2):
+            description_list.append({"description": hit(player_pokemon, opponent_pokemon)})
+        else:
+            description_list.append({"description": hit(opponent_pokemon, player_pokemon)})
+    FightResult.objects.create(player_pokemon=player_pokemon.name,
+                               opponent_pokemon=opponent_pokemon.name,
+                               result=opponent_pokemon.hp == 0,
+                               battle_date=timezone.localtime())
+    return {
+        "player_pokemon": player_pokemon.to_json(),
+        "opponent_pokemon": opponent_pokemon.to_json(),
+        "description_list": description_list
+    }

@@ -1,4 +1,3 @@
-import json
 from dataclasses import dataclass, asdict
 from django.conf import settings
 from django.db import models
@@ -11,7 +10,6 @@ class Pokemon:
     hp: int = None
     attack: int = None
     defense: int = None
-    is_default: bool = None
     base_experience: int = None
     height: int = None
     weight: int = None
@@ -21,10 +19,10 @@ class Pokemon:
         return self.name
 
     def to_json(self):
-        return json.dumps(asdict(self))
+        return asdict(self, dict_factory=lambda x: {k: v for (k, v) in x if v is not None})
 
 
-class Battle(models.Model):
+class FightResult(models.Model):
     player_pokemon = models.TextField()
     opponent_pokemon = models.TextField()
     result = models.BooleanField()

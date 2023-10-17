@@ -1,7 +1,7 @@
 {% load static %}
 <div class="d-flex flex-column">
     <div id="grid" class="grid row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 row-cols-xl-6 p-2">
-        {% for object in objects %}
+        {% for object in pokemons %}
             <div class="col d-flex align-items-stretch mb-3">
                 <div class="card w-100" data-name="{{ object.name }}">
                     <img draggable="false"
@@ -17,11 +17,11 @@
     <div class="d-flex justify-content-between">
         <button type="button" class="btn {% if prev %}btn-primary{% else %}btn-secondary{% endif %} mx-4"
                 {% if not prev %}disabled{% endif %}
-                onclick="window.location.href = window.location.href.split('?')[0] + '?{{ prev }}'">Предыдущая страница
+                onclick="window.location.href = '{{ prev }}'">Предыдущая страница
         </button>
         <button type="button" class="btn {% if next %}btn-primary{% else %}btn-secondary{% endif %} mx-4"
                 {% if not next %}disabled{% endif %}
-                onclick="window.location.href = window.location.href.split('?')[0] + '?{{ next }}'">Следующая страница
+                onclick="window.location.href = '{{ next }}'">Следующая страница
         </button>
     </div>
 </div>

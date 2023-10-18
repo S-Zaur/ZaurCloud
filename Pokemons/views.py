@@ -6,9 +6,13 @@ from django.core.mail import get_connection, EmailMessage
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from Pokemons.API.pokemon_utils import *
+from Pokemons.API.views import api_save_pokemon
 
 
 def index(request):
+    if request.method == "POST":
+        if request.POST["action"] == "FTP":
+            return api_save_pokemon(request, request.POST["name"])
     if "action" in request.GET:
         if request.GET["action"] == "Properties":
             return JsonResponse(get_pokemon(request.GET["name"]).to_json())

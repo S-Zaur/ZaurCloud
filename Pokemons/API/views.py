@@ -1,5 +1,9 @@
+import datetime
+import io
 import json
+from ftplib import FTP
 
+from django.conf import settings
 from django.core.exceptions import SuspiciousOperation
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
@@ -51,3 +55,20 @@ def api_fast_fight(request):
     player_pokemon = Pokemon(**json.loads(request.GET["player_pokemon"].replace("'", '"')))
     opponent_pokemon = Pokemon(**json.loads(request.GET["opponent_pokemon"].replace("'", '"')))
     return JsonResponse(fight_fast(player_pokemon, opponent_pokemon))
+
+
+@require_http_methods(["POST", "GET"])
+def api_save_pokemon(request, pokemon_id: int):
+    pokemon = get_pokemon(pokemon_id)
+    with FTP(settings.FTP_SERVER) as ftp:
+        ftp.login(user=settings.FTP_USERNAME, passwd=settings.FTP_PASSWORD)
+        folder_name = datetime.datetime.today().strftime("%Y%m%d")
+        if folder_name not in ftp.nlst():
+            ftp.mkd(folder_name)
+        result = f"# {pokemon.name}\n "
+        result += f"|   Property   | Description |\n| ----------- | ----------- |\n"
+        for key in pokemon.__dict__:
+            result += f"|{key}|{pokemon.__dict__[key]}|\n"
+        bio = io.BytesIO(result.encode('ascii'))
+        ftp.storbinary(f'STOR {folder_name}/{pokemon.name}.md', bio)
+    return JsonResponse({"result": "ok"})

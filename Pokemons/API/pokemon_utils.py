@@ -36,10 +36,16 @@ def pokemons_list(payload, base_page=None):
 
 
 def get_pokemon(pokemon_id):
+    sentinel = object()
+    result = cache.get(str(pokemon_id), sentinel)
+    if result is not sentinel:
+        return result
     response = r.get('https://pokeapi.co/api/v2/pokemon/' + str(pokemon_id))
     if response.status_code == 404:
         raise Http404
-    return parce_pokemon(response.json())
+    result = parce_pokemon(response.json())
+    cache.set(str(pokemon_id), result)
+    return result
 
 
 def get_random_pokemon():

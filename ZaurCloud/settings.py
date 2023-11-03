@@ -135,6 +135,14 @@ STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'Pokemons', 'static'),
 )
 
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.redis.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379",
+        "TIMEOUT": 900
+    }
+}
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 

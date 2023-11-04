@@ -90,7 +90,7 @@ DATABASES = {
         'NAME': os.getenv("POSTGRES_DB"),
         'USER': os.getenv("POSTGRES_USER"),
         'PASSWORD': os.getenv("POSTGRES_PASSWORD"),
-        'HOST': 'localhost',
+        'HOST': os.getenv("POSTGRES_HOST"),
         'PORT': '5432',
     }
 }
@@ -138,7 +138,7 @@ STATICFILES_DIRS = (
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379",
+        "LOCATION": "redis://redis:6379",
         "TIMEOUT": 900
     }
 }

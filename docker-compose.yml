@@ -1,0 +1,66 @@
+version: "3"
+services:
+  django:
+    build:
+      context: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app:/app
+    command: >
+      sh -c "python manage.py runserver 0.0.0.0:8000"
+    depends_on:
+      - pgdb
+      - migrate
+      - redis
+      - ftp
+
+  migrate:
+    build: .
+    container_name: 'migrate'
+    command: >
+      /bin/sh -c "python3 manage.py makemigrations --force-color --no-input -v 3 && python3 manage.py makemigrations --force-color --no-input -v 3 && python3 manage.py migrate --force-color -v 3 && python3 manage.py createsuperuser --noinput; exit 0"
+    environment:
+      - DJANGO_SUPERUSER_USERNAME=admin
+      - DJANGO_SUPERUSER_PASSWORD=admin
+      - DJANGO_SUPERUSER_EMAIL=admin@example.com
+    volumes:
+      - ./app:/app
+    depends_on:
+      - pgdb
+
+  pgdb:
+    image: postgres:13-alpine
+    container_name: pgdb
+    ports:
+      - 5432:5432
+    restart: always
+    volumes:
+      - pgdbdata:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=zaurcloudadmin
+      - POSTGRES_PASSWORD=P@ssw0rd
+      - POSTGRES_DB=zaurcloud
+
+  redis:
+    image: redis:7.0-alpine
+    restart: always
+    container_name: redis
+    ports:
+      - "6379:6379"
+    environment:
+      - REDIS_PASSWORD=P@ssw0rd
+      - REDIS_PORT=6379
+      - REDIS_DATABASES=16
+
+  ftp:
+    image: delfer/alpine-ftp-server:latest
+    restart: always
+    container_name: ftp
+    ports:
+      - "21:21"
+    environment:
+      - USERS=user|P@ssw0rd
+
+volumes:
+  pgdbdata: null

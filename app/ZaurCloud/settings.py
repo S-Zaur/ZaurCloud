@@ -20,9 +20,7 @@ from dotenv import load_dotenv
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_DIR = os.path.dirname(__file__)
 
-DOTENV_PATH = os.path.join(BASE_DIR, '.env')
-if os.path.exists(DOTENV_PATH):
-    load_dotenv(DOTENV_PATH)
+load_dotenv()
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
@@ -138,7 +136,7 @@ STATICFILES_DIRS = (
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": "redis://redis:6379",
+        "LOCATION": f"redis://{os.getenv('REDIS_HOST')}:{os.getenv('REDIS_PORT')}",
         "TIMEOUT": 900
     }
 }

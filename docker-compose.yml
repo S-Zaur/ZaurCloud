@@ -1,8 +1,7 @@
 version: "3"
 services:
   django:
-    build:
-      context: .
+    image: szaur/zaur-cloud
     ports:
       - "8000:8000"
     volumes:
@@ -17,15 +16,11 @@ services:
       - ftp
 
   migrate:
-    build: .
+    image: szaur/zaur-cloud
     container_name: 'migrate'
     env_file: .env
     command: >
       /bin/sh -c "python3 manage.py makemigrations --force-color --no-input -v 3 && python3 manage.py makemigrations --force-color --no-input -v 3 && python3 manage.py migrate --force-color -v 3 && python3 manage.py createsuperuser --noinput; exit 0"
-    environment:
-      - DJANGO_SUPERUSER_USERNAME=admin
-      - DJANGO_SUPERUSER_PASSWORD=admin
-      - DJANGO_SUPERUSER_EMAIL=admin@example.com
     volumes:
       - ./app:/app
     depends_on:

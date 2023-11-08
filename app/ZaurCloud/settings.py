@@ -150,7 +150,7 @@ LOGIN_REDIRECT_URL = '/cloud'
 
 SYSTEM = platform.system()
 
-STORAGE_DIRECTORY = 'C:\\Users\\zaurs'
+STORAGE_DIRECTORY = os.getenv("STORAGE_DIRECTORY")
 
 locale.setlocale(locale.LC_ALL, "ru")
 

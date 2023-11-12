@@ -12,8 +12,20 @@ services:
     depends_on:
       - pgdb
       - migrate
+      - test
       - redis
       - ftp
+
+  test:
+    image: szaur/zaur-cloud
+    container_name: 'test'
+    env_file: .env
+    command: >
+      /bin/sh -c "python3 manage.py test --no-input; exit 0"
+    volumes:
+      - ./app:/app
+    depends_on:
+      - pgdb
 
   migrate:
     image: szaur/zaur-cloud

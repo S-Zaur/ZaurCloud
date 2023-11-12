@@ -26,7 +26,7 @@ def check400(func):
 
 @require_http_methods(["GET"])
 def api_pokemons_list(request):
-    return JsonResponse(pokemons_list(get_payload(request)))
+    return JsonResponse(pokemons_list(get_payload(request), base_page=reverse('Pokemons.API.List')))
 
 
 @require_http_methods(["GET"])

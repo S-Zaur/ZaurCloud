@@ -19,7 +19,7 @@ def get_payload(request):
 
 def pokemons_list(payload, base_page=None):
     sentinel = object()
-    result = cache.get(str(payload).replace(' ', '_'), sentinel)
+    result = cache.get((str(payload) + base_page).replace(' ', '_'), sentinel)
     if result is not sentinel:
         return result
     response = r.get('https://pokeapi.co/api/v2/pokemon', params=payload).json()
@@ -31,7 +31,7 @@ def pokemons_list(payload, base_page=None):
               "next": next_page,
               "prev": prev_page,
               "pokemons": parce_pokemons(response['results'])}
-    cache.set(str(payload).replace(' ', '_'), result)
+    cache.set((str(payload) + base_page).replace(' ', '_'), result)
     return result
 
 

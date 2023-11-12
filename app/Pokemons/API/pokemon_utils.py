@@ -112,7 +112,8 @@ def hit(first_pokemon: Pokemon, second_pokemon: Pokemon):
 
 
 def fight_start(player_pokemon, opponent_pokemon):
-    return {"player": get_pokemon(player_pokemon).to_json(), "opponent": get_pokemon(opponent_pokemon).to_json()}
+    return {"player_pokemon": get_pokemon(player_pokemon).to_json(),
+            "opponent_pokemon": get_pokemon(opponent_pokemon).to_json()}
 
 
 def fight_fast(player_pokemon: Pokemon, opponent_pokemon: Pokemon):

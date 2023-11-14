@@ -63,7 +63,7 @@ species bulbasaur"""
         self.assertEqual(prev_page_button.get_attribute('onclick'), "window.location.href = 'None'")
         next_page_button = self.selenium.find_element(By.ID, 'next-page')
         self.assertEqual(next_page_button.get_attribute('onclick'),
-                         "window.location.href = '/pokemons/api/pokemon/list/?offset=100&limit=100'")
+                         "window.location.href = '/pokemons/?offset=100&limit=100'")
 
     def test_pokemon_properties(self):
         self.selenium.get(f"{self.live_server_url}{reverse('Pokemons.index')}")

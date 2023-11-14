@@ -14,6 +14,8 @@ WORKDIR /app
 
 COPY ./app /app
 
+RUN apk add firefox
+
 RUN adduser -D user
 
 USER user

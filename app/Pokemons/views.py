@@ -5,6 +5,7 @@ from django.core.exceptions import SuspiciousOperation
 from django.core.mail import get_connection, EmailMessage
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
+
 from Pokemons.API.pokemon_utils import *
 from Pokemons.API.views import api_save_pokemon
 
@@ -45,8 +46,11 @@ def fight(request):
 
 def default_get_actions(request):
     if request.GET["action"] == "Search":
-        poke = get_pokemon(request.GET["name"])
-        return render(request, 'Pokemons/index.html', context={"pokemons": [poke]})
+        try:
+            poke = get_pokemon(request.GET["name"])
+            return render(request, 'Pokemons/index.html', context={"pokemons": [poke]})
+        except Http404:
+            return render(request, 'Pokemons/index.html', context={"errors": "not found"})
     if request.GET["action"] == "Battle":
         url = reverse('Pokemons.battle')
         player_pokemon = request.GET["name"]

@@ -50,7 +50,7 @@ def default_get_actions(request):
             poke = get_pokemon(request.GET["name"])
             return render(request, 'Pokemons/index.html', context={"pokemons": [poke]})
         except Http404:
-            return render(request, 'Pokemons/index.html', context={"errors": "not found"})
+            return render(request, 'Pokemons/index.html', context={"errors": "not found"}, status=404)
     if request.GET["action"] == "Battle":
         url = reverse('Pokemons.battle')
         player_pokemon = request.GET["name"]

@@ -2,7 +2,7 @@ FROM python:3.11-alpine
 
 LABEL Author="S-Zaur"
 
-ENV PUTHONBUFFERED 1
+ENV PYTHONUNBUFFERED 1
 
 COPY ./requirements.txt /requirements.txt
 

@@ -45,6 +45,8 @@ INSTALLED_APPS = [
     'Accounts',
     'Cloud',
     'Pokemons',
+    'social_django',
+    'social.apps.django_app.default',
 ]
 
 MIDDLEWARE = [
@@ -74,6 +76,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social.apps.django_app.context_processors.backends',
+                'social.apps.django_app.context_processors.login_redirect',
             ],
         },
     },
@@ -114,6 +118,11 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.vk.VKOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
@@ -175,3 +184,10 @@ FTP_PASSWORD = os.getenv("FTP_PASSWORD")
 # Auth Settings
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 OTP_TIMEOUT = 900
+
+# OAUTH2 Settings
+SOCIAL_AUTH_VK_OAUTH2_KEY = os.getenv('SOCIAL_AUTH_VK_OAUTH2_KEY')
+SOCIAL_AUTH_VK_OAUTH2_SECRET = os.getenv('SOCIAL_AUTH_VK_OAUTH2_SECRET')
+SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email']
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/pokemons/'
+SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/accounts/register/'

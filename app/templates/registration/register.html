@@ -53,5 +53,11 @@
                 <input type="hidden" name="next" value="{{ next }}"/>
             </div>
         </div>
+        <div class="row mb-0 mt-4">
+            <div class="col-md-4 offset-md-4">
+                <a href="{% url 'social:begin' 'vk-oauth2' %}"
+                   class="btn btn-primary py-1 px-4">Register with VK</a>
+            </div>
+        </div>
     </form>
 {% endblock %}

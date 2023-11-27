@@ -5,3 +5,5 @@ psycopg2-binary~=2.9.9
 redis~=5.0.1
 selenium~=4.15.2
 six~=1.16.0
+python-social-auth~=0.3.6
+social-auth-app-django~=5.4.0

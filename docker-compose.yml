@@ -4,6 +4,7 @@ services:
     image: szaur/zaur-cloud
     ports:
       - "8000:8000"
+      - "80:8000"
     volumes:
       - ./app:/app
     env_file: .env

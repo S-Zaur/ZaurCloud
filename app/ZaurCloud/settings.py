@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'Accounts',
     'Cloud',
     'Pokemons',
 ]
@@ -170,3 +171,7 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 FTP_SERVER = os.getenv("FTP_SERVER")
 FTP_USERNAME = os.getenv("FTP_USERNAME")
 FTP_PASSWORD = os.getenv("FTP_PASSWORD")
+
+# Auth Settings
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+OTP_TIMEOUT = 900

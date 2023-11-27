@@ -21,6 +21,7 @@ urlpatterns = [
     path('', RedirectView.as_view(pattern_name='Cloud.index', permanent=False), name='index'),
     path('admin/', admin.site.urls),
     path('cloud/', include("Cloud.urls")),
+    path('accounts/', include('Accounts.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
     path('pokemons/', include('Pokemons.urls')),
 ]

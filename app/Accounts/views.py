@@ -129,3 +129,25 @@ def otp_verify_view(request):
             return redirect(reverse('otp'))
     else:
         return render(request, 'registration/otp.html')
+
+
+def registration_complete(request, user_id=None):
+    if user_id is None:
+        return redirect(reverse('login'))
+    user = get_user_model().objects.get(pk=user_id)
+    if user.is_active:
+        return redirect(reverse('index'))
+    if request.method == "POST":
+        form = UserRegistrationForm(request.POST)
+        if form.is_valid():
+            user.set_password(request.POST.get('password'))
+            user.username = request.POST.get('username')
+            user.email = request.POST.get('email')
+            user.save()
+            activate_email(request, user, form.cleaned_data.get('email'))
+            return render(request, 'registration/register_done.html', {'new_user': user})
+        else:
+            for error in list(form.errors.values()):
+                messages.error(request, error)
+
+    return render(request, 'registration/register_complete.html', {'user': user})

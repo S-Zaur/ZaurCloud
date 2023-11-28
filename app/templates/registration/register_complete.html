@@ -14,19 +14,22 @@
     </div>
     <h1 class="main-heading">Create an account</h1>
     <p style="text-align: center">Please, sign up using the following form:</p>
-    <form method="POST" action="{% url 'register' %}">
+    <form method="POST" action="{% url 'register-complete' user.id %}">
         {% csrf_token %}
+        <input type="hidden" name="id"
+               value="{{ user.id }}">
         <div class="row mb-3">
             <label for="id_username" class="col-md-4 col-form-label text-md-end">Username</label>
             <div class="col-md-6">
-                <input id="id_username" type="text" class="form-control " name="username" value="" required
+                <input id="id_username" type="text" class="form-control " name="username" value="{{ user.username }}"
+                       required
                        autocomplete="username" autofocus>
             </div>
         </div>
         <div class="row mb-3">
             <label for="id_email" class="col-md-4 col-form-label text-md-end">Email</label>
             <div class="col-md-6">
-                <input id="id_email" type="email" class="form-control " name="email" value="" required
+                <input id="id_email" type="email" class="form-control " name="email" value="{{ user.email }}" required
                        autocomplete="email" autofocus>
             </div>
         </div>
@@ -51,12 +54,6 @@
                 </button>
 
                 <input type="hidden" name="next" value="{{ next }}"/>
-            </div>
-        </div>
-        <div class="row mb-0 mt-4">
-            <div class="col-md-4 offset-md-4">
-                <a href="{% url 'social:begin' 'vk-oauth2' %}"
-                   class="btn btn-primary py-1 px-4">Register with VK</a>
             </div>
         </div>
     </form>

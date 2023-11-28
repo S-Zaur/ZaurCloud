@@ -20,8 +20,10 @@
                 <img draggable="false" class="card-img-top img-fluid img-thumbnail" alt="Pokemon"
                      src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{{ player_pokemon.id }}.png">
                 <div class="card-body">
-                    <progress id="player_hp" max="{{ player_pokemon.hp }}" value="{{ player_pokemon.hp }}" class="w-100"></progress>
-                    <p class="card-text">HP/Attack/Defence: {{ player_pokemon.hp }}/{{ player_pokemon.attack }}/{{ player_pokemon.defense }}</p>
+                    <progress id="player_hp" max="{{ player_pokemon.hp }}" value="{{ player_pokemon.hp }}"
+                              class="w-100"></progress>
+                    <p class="card-text">
+                        HP/Attack/Defence: {{ player_pokemon.hp }}/{{ player_pokemon.attack }}/{{ player_pokemon.defense }}</p>
                     <h5 class="card-title" id="player_name">{{ player_pokemon.name }}</h5>
                 </div>
             </div>
@@ -38,6 +40,7 @@
                 {% csrf_token %}
                 <input type="hidden" name="player_pokemon" id="player_pokemon" value="{{ player_pokemon }}">
                 <input type="hidden" name="opponent_pokemon" id="opponent_pokemon" value="{{ opponent_pokemon }}">
+                <input id="round-counter" type="hidden" name="round_count" value="0">
                 <label>
                     <input id="hit-number" type="number" name="number" max="10" min="1" value="1" class="w-50 mx-auto">
                 </label>

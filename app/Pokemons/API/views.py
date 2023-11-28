@@ -46,7 +46,8 @@ def api_fight(request, number: int = None):
     if request.method == "POST":
         player_pokemon = Pokemon(**json.loads(request.POST["player_pokemon"].replace("'", '"')))
         opponent_pokemon = Pokemon(**json.loads(request.POST["opponent_pokemon"].replace("'", '"')))
-        return JsonResponse(fight_hit(request, player_pokemon, opponent_pokemon, number))
+        return JsonResponse(
+            fight_hit(request, int(request.POST['round_count']), player_pokemon, opponent_pokemon, number))
     return JsonResponse(fight_start(request.GET["player_pokemon"], request.GET["opponent_pokemon"]))
 
 

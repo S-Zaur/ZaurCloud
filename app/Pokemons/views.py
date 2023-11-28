@@ -34,7 +34,8 @@ def fight(request):
             player_pokemon = Pokemon(**json.loads(request.GET["player_pokemon"].replace("'", '"')))
             opponent_pokemon = Pokemon(**json.loads(request.GET["opponent_pokemon"].replace("'", '"')))
             number = int(request.GET["number"])
-            return JsonResponse(fight_hit(request, player_pokemon, opponent_pokemon, number))
+            current_round = int(request.GET["round_count"])
+            return JsonResponse(fight_hit(request, current_round, player_pokemon, opponent_pokemon, number))
         if request.GET["action"] == "Fast":
             player_pokemon = Pokemon(**json.loads(request.GET["player_pokemon"].replace("'", '"')))
             opponent_pokemon = Pokemon(**json.loads(request.GET["opponent_pokemon"].replace("'", '"')))

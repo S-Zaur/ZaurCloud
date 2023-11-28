@@ -10,12 +10,10 @@ RUN pip install -r requirements.txt
 
 RUN mkdir /app
 
+RUN mkdir /var/lib/zaurcloud
+
 WORKDIR /app
 
 COPY ./app /app
 
 RUN apk add firefox
-
-RUN adduser -D user
-
-USER user

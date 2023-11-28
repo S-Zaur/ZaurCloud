@@ -9,6 +9,8 @@ export function hitSubmitHandler(e) {
         data: $("#hit-form").serialize(),
         dataType: "json",
         success: function (data) {
+            let counter = $("#round-counter");
+            counter.val(parseInt(counter.val()) + 1)
             let battle_log = $("#battle-log");
             battle_log.append($("<div>").append(document.createTextNode(data.description + "\n")));
             if ("player_pokemon" in data) {

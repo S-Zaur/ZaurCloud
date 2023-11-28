@@ -1,4 +1,5 @@
 from dataclasses import dataclass, asdict
+
 from django.conf import settings
 from django.db import models
 
@@ -26,5 +27,6 @@ class FightResult(models.Model):
     player_pokemon = models.TextField()
     opponent_pokemon = models.TextField()
     result = models.BooleanField()
+    rounds_count = models.IntegerField(default=1)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
     battle_date = models.DateTimeField()

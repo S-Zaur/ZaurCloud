@@ -87,7 +87,7 @@ def parce_pokemon(json):
     )
 
 
-def fight_hit(request, player_pokemon: Pokemon, opponent_pokemon: Pokemon, user_number: int):
+def fight_hit(request, current_round, player_pokemon: Pokemon, opponent_pokemon: Pokemon, user_number: int):
     rnd = random.randint(1, 10)
     if (user_number % 2) == (rnd % 2):
         description = hit(player_pokemon, opponent_pokemon)
@@ -98,11 +98,13 @@ def fight_hit(request, player_pokemon: Pokemon, opponent_pokemon: Pokemon, user_
                                    opponent_pokemon=opponent_pokemon.name,
                                    result=opponent_pokemon.hp == 0,
                                    battle_date=timezone.localtime(),
+                                   rounds_count=current_round + 1,
                                    user=request.user if request.user.is_authenticated else None)
     return {
         "player_pokemon": player_pokemon.to_json(),
         "opponent_pokemon": opponent_pokemon.to_json(),
-        "description": description
+        "description": description,
+        "round_count": current_round + 1
     }
 
 
@@ -115,7 +117,8 @@ def hit(first_pokemon: Pokemon, second_pokemon: Pokemon):
 
 def fight_start(player_pokemon, opponent_pokemon):
     return {"player_pokemon": get_pokemon(player_pokemon).to_json(),
-            "opponent_pokemon": get_pokemon(opponent_pokemon).to_json()}
+            "opponent_pokemon": get_pokemon(opponent_pokemon).to_json(),
+            "round_count": 0}
 
 
 def fight_fast(request, player_pokemon: Pokemon, opponent_pokemon: Pokemon):
@@ -128,6 +131,7 @@ def fight_fast(request, player_pokemon: Pokemon, opponent_pokemon: Pokemon):
     FightResult.objects.create(player_pokemon=player_pokemon.name,
                                opponent_pokemon=opponent_pokemon.name,
                                result=opponent_pokemon.hp == 0,
+                               rounds_count=len(description_list),
                                battle_date=timezone.localtime(),
                                user=request.user if request.user.is_authenticated else None)
     return {

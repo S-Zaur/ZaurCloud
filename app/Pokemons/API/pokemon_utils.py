@@ -98,7 +98,7 @@ def fight_hit(request, player_pokemon: Pokemon, opponent_pokemon: Pokemon, user_
                                    opponent_pokemon=opponent_pokemon.name,
                                    result=opponent_pokemon.hp == 0,
                                    battle_date=timezone.localtime(),
-                                   user=request.user)
+                                   user=request.user if request.user.is_authenticated else None)
     return {
         "player_pokemon": player_pokemon.to_json(),
         "opponent_pokemon": opponent_pokemon.to_json(),
@@ -129,7 +129,7 @@ def fight_fast(request, player_pokemon: Pokemon, opponent_pokemon: Pokemon):
                                opponent_pokemon=opponent_pokemon.name,
                                result=opponent_pokemon.hp == 0,
                                battle_date=timezone.localtime(),
-                               user=request.user)
+                               user=request.user if request.user.is_authenticated else None)
     return {
         "player_pokemon": player_pokemon.to_json(),
         "opponent_pokemon": opponent_pokemon.to_json(),

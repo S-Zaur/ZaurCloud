@@ -7,6 +7,7 @@ from django.conf import settings
 from django.core.exceptions import SuspiciousOperation
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
+
 from Pokemons.API.pokemon_utils import *
 from Pokemons.models import Pokemon
 
@@ -45,7 +46,7 @@ def api_fight(request, number: int = None):
     if request.method == "POST":
         player_pokemon = Pokemon(**json.loads(request.POST["player_pokemon"].replace("'", '"')))
         opponent_pokemon = Pokemon(**json.loads(request.POST["opponent_pokemon"].replace("'", '"')))
-        return JsonResponse(fight_hit(player_pokemon, opponent_pokemon, number))
+        return JsonResponse(fight_hit(request, player_pokemon, opponent_pokemon, number))
     return JsonResponse(fight_start(request.GET["player_pokemon"], request.GET["opponent_pokemon"]))
 
 
@@ -54,7 +55,7 @@ def api_fight(request, number: int = None):
 def api_fast_fight(request):
     player_pokemon = Pokemon(**json.loads(request.GET["player_pokemon"].replace("'", '"')))
     opponent_pokemon = Pokemon(**json.loads(request.GET["opponent_pokemon"].replace("'", '"')))
-    return JsonResponse(fight_fast(player_pokemon, opponent_pokemon))
+    return JsonResponse(fight_fast(request, player_pokemon, opponent_pokemon))
 
 
 @require_http_methods(["POST", "GET"])

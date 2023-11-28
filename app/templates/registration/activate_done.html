@@ -1,0 +1,9 @@
+{% extends "registration/auth_base.html" %}
+
+{% block title %}Welcome{% endblock %}
+
+{% block content %}
+    <h1 class="main-heading">Welcome {{ new_user.first_name }}!</h1>
+    <p style="text-align: center">Thank you for your email confirmation. Now you can <a href="{% url "login" %}">log
+        in</a>.</p>
+{% endblock %}

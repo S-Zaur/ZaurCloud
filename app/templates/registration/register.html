@@ -1,0 +1,63 @@
+{% extends "registration/auth_base.html" %}
+
+{% block title %}Create an account{% endblock %}
+
+{% block content %}
+    <div class="row ">
+        <div class="col">
+            {% if messages %}
+                {% for message in messages %}
+                    <strong>{{ message }}</strong>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+    <h1 class="main-heading">Create an account</h1>
+    <p style="text-align: center">Please, sign up using the following form:</p>
+    <form method="POST" action="{% url 'register' %}">
+        {% csrf_token %}
+        <div class="row mb-3">
+            <label for="id_username" class="col-md-4 col-form-label text-md-end">Username</label>
+            <div class="col-md-6">
+                <input id="id_username" type="text" class="form-control " name="username" value="" required
+                       autocomplete="username" autofocus>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label for="id_email" class="col-md-4 col-form-label text-md-end">Email</label>
+            <div class="col-md-6">
+                <input id="id_email" type="email" class="form-control " name="email" value="" required
+                       autocomplete="email" autofocus>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label for="id_password" class="col-md-4 col-form-label text-md-end">Password</label>
+            <div class="col-md-6">
+                <input id="id_password" type="password" class="form-control " name="password" value="" required
+                       autocomplete="password" autofocus>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <label for="id_password2" class="col-md-4 col-form-label text-md-end">Repeat password</label>
+            <div class="col-md-6">
+                <input id="id_password2" type="password" class="form-control " name="password2" value="" required
+                       autocomplete="password" autofocus>
+            </div>
+        </div>
+        <div class="row mb-0 mt-4">
+            <div class="col-md-4 offset-md-4">
+                <button type="submit" class="btn btn-primary py-1 px-4 " value="login">
+                    Зарегистрироваться
+                </button>
+
+                <input type="hidden" name="next" value="{{ next }}"/>
+            </div>
+        </div>
+        <div class="row mb-0 mt-4">
+            <div class="col-md-4 offset-md-4">
+                <a href="{% url 'social:begin' 'vk-oauth2' %}"
+                   class="btn btn-primary py-1 px-4">Register with VK</a>
+            </div>
+        </div>
+    </form>
+{% endblock %}

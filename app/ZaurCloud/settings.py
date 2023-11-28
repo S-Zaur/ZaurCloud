@@ -42,8 +42,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'Accounts',
     'Cloud',
     'Pokemons',
+    'social_django',
+    'social.apps.django_app.default',
 ]
 
 MIDDLEWARE = [
@@ -64,6 +67,7 @@ TEMPLATES = [
         'DIRS': [
             os.path.join(BASE_DIR, 'Cloud', 'templates'),
             os.path.join(BASE_DIR, 'Pokemons', 'templates'),
+            os.path.join(BASE_DIR, 'Accounts', 'templates'),
             os.path.join(BASE_DIR, 'templates'),
         ],
         'APP_DIRS': True,
@@ -73,6 +77,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -113,6 +119,11 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.vk.VKOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
@@ -170,3 +181,32 @@ EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 FTP_SERVER = os.getenv("FTP_SERVER")
 FTP_USERNAME = os.getenv("FTP_USERNAME")
 FTP_PASSWORD = os.getenv("FTP_PASSWORD")
+
+# Auth Settings
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+OTP_TIMEOUT = 900
+
+# OAUTH2 Settings
+SOCIAL_AUTH_VK_OAUTH2_KEY = os.getenv('SOCIAL_AUTH_VK_OAUTH2_KEY')
+SOCIAL_AUTH_VK_OAUTH2_SECRET = os.getenv('SOCIAL_AUTH_VK_OAUTH2_SECRET')
+SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email']
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/pokemons/'
+SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/accounts/register/'
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',
+    'social_core.pipeline.social_auth.social_uid',
+    'social_core.pipeline.social_auth.social_user',
+    'social_core.pipeline.user.get_username',
+    'social_core.pipeline.social_auth.associate_by_email',
+    'social_core.pipeline.user.create_user',
+    'social_core.pipeline.social_auth.associate_user',
+    'social_core.pipeline.social_auth.load_extra_data',
+    'social_core.pipeline.user.user_details',
+    'Accounts.pipeline.registration_complete',
+)
+SOCIAL_AUTH_DISCONNECT_PIPELINE = (
+    'social.pipeline.disconnect.get_entries',
+    'social.pipeline.disconnect.revoke_tokens',
+    'social.pipeline.disconnect.disconnect',
+)

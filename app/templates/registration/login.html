@@ -1,6 +1,15 @@
 {% extends "registration/auth_base.html" %}
 {% block title %}Login{% endblock %}
 {% block content %}
+    <div class="row">
+        <div class="col">
+            {% if messages %}
+                {% for message in messages %}
+                    <strong>{{ message }}</strong>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
     <h1 class="main-heading">Login</h1>
     {% if form.errors %}
         <p style="text-align: center">Your username and password didn't match. Please try again.</p>
@@ -43,17 +52,30 @@
             </div>
         </div>
 
-        <div class="row mb-0 mt-4">
-            <div class="col-md-8 offset-md-3">
+        <div class="row mb-3 mt-4">
+            <div class="col-md-6 offset-md-4">
                 <button type="submit" class="btn btn-primary py-1 px-4 " value="login">
                     Login
                 </button>
 
-                <input type="hidden" name="next" value="{{ next }}" />
-                <a class="text-decoration-none ps-4" href="{% url 'password_reset' %}">
-                    Forgot Your Password?
-                </a>
+                <input type="hidden" name="next" value="{{ next }}"/>
+                <a href="{% url 'social:begin' 'vk-oauth2' %}?next={% url 'index' %}"
+                   class="btn btn-primary py-1 px-4 ">Login with VK</a>
             </div>
         </div>
     </form>
+    <div class="row mb-0 ">
+        <div class="col-md-4 offset-md-4">
+            <a class="text-decoration-none ps-4" href="{% url 'password_reset' %}">
+                Forgot Your Password?
+            </a>
+        </div>
+    </div>
+    <div class="row mb-0 ">
+        <div class="col-md-5 offset-md-4">
+            <a class="text-decoration-none ps-4" href="{% url 'register' %}">
+                Don't have an account?
+            </a>
+        </div>
+    </div>
 {% endblock %}

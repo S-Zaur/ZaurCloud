@@ -1,11 +1,12 @@
 import random
 
-from django.utils import timezone
-from django.http import Http404
-from django.urls import reverse
-from Pokemons.models import Pokemon, FightResult
 import requests as r
 from django.core.cache import cache
+from django.http import Http404
+from django.urls import reverse
+from django.utils import timezone
+
+from Pokemons.models import Pokemon, FightResult
 
 
 def get_payload(request):
@@ -86,7 +87,7 @@ def parce_pokemon(json):
     )
 
 
-def fight_hit(player_pokemon: Pokemon, opponent_pokemon: Pokemon, user_number: int):
+def fight_hit(request, player_pokemon: Pokemon, opponent_pokemon: Pokemon, user_number: int):
     rnd = random.randint(1, 10)
     if (user_number % 2) == (rnd % 2):
         description = hit(player_pokemon, opponent_pokemon)
@@ -96,7 +97,8 @@ def fight_hit(player_pokemon: Pokemon, opponent_pokemon: Pokemon, user_number: i
         FightResult.objects.create(player_pokemon=player_pokemon.name,
                                    opponent_pokemon=opponent_pokemon.name,
                                    result=opponent_pokemon.hp == 0,
-                                   battle_date=timezone.localtime())
+                                   battle_date=timezone.localtime(),
+                                   user=request.user)
     return {
         "player_pokemon": player_pokemon.to_json(),
         "opponent_pokemon": opponent_pokemon.to_json(),
@@ -116,7 +118,7 @@ def fight_start(player_pokemon, opponent_pokemon):
             "opponent_pokemon": get_pokemon(opponent_pokemon).to_json()}
 
 
-def fight_fast(player_pokemon: Pokemon, opponent_pokemon: Pokemon):
+def fight_fast(request, player_pokemon: Pokemon, opponent_pokemon: Pokemon):
     description_list = []
     while player_pokemon.hp > 0 and opponent_pokemon.hp > 0:
         if (random.randint(1, 10) % 2) == (random.randint(1, 10) % 2):
@@ -126,7 +128,8 @@ def fight_fast(player_pokemon: Pokemon, opponent_pokemon: Pokemon):
     FightResult.objects.create(player_pokemon=player_pokemon.name,
                                opponent_pokemon=opponent_pokemon.name,
                                result=opponent_pokemon.hp == 0,
-                               battle_date=timezone.localtime())
+                               battle_date=timezone.localtime(),
+                               user=request.user)
     return {
         "player_pokemon": player_pokemon.to_json(),
         "opponent_pokemon": opponent_pokemon.to_json(),

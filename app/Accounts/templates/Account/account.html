@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en" class="min-vh-100">
+<head>
+    <title>{{ name|default:"ZaurCloud" }}</title>
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'styles/bootstrap.min.css' %}">
+    <link rel="shortcut icon" type="image/ico" href="{% static 'images/favicon.ico' %}">
+    <script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+</head>
+
+<body>
+{% include "Cloud/nav.html" %}
+<div class="d-flex flex-row flex-grow-1">
+    {% include 'Cloud/sidebar.html' %}
+    <div class="position-relative w-100" id="main-container"
+         style="height:calc(100vh - 70px);overflow: auto;overflow-x: hidden">
+        <div class="container mt-4 mb-4 p-3 d-flex justify-content-center">
+            <div class="card p-4">
+                <div class="image d-flex flex-column justify-content-center align-items-center">
+                    <button class="btn btn-secondary"><img src="{% static 'Cloud/images/logo.png' %}" height="100"
+                                                           width="100" alt=""/></button>
+                    <span class="mt-3">{{ user.first_name }} {{ user.last_name }}</span>
+                    <span>@{{ user.username }}</span>
+                    {% load hasher %}
+                    <div class="d-flex flex-row justify-content-center align-items-center gap-2"><span
+                            class="idd1">0x{% hasher user.username %}</span></div>
+                    <div class="d-flex mt-2">
+                        <a class="btn btn-dark" href="{% url 'password_change' %}">Change password</a>
+                    </div>
+                </div>
+                <div class="px-2 rounded mt-4"><span>Joined {{ user.date_joined }}</span>
+                </div>
+                {% if vk_linked %}
+                    <form method="POST" action="{% url 'social:disconnect' 'vk-oauth2' %}">
+                        {% csrf_token %}
+                        <div class="row mb-0 mt-4">
+                            <div class="col-md-8 offset-md-3">
+                                <button type="submit" class="btn btn-secondary py-1 px-4 " value="login">
+                                    Unlink VK
+                                </button>
+                                <input type="hidden" name="next" value="{{ next }}"/>
+                            </div>
+                        </div>
+                    </form>
+                {% else %}
+                    <form method="POST" action="{% url 'social:begin' 'vk-oauth2' %}">
+                        {% csrf_token %}
+                        <div class="row mb-0 mt-4">
+                            <div class="col-md-8 offset-md-3">
+                                <button type="submit" class="btn btn-primary py-1 px-4 " value="login">
+                                    Link VK
+                                </button>
+                                <input type="hidden" name="next" value="{{ next }}"/>
+                            </div>
+                        </div>
+                    </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

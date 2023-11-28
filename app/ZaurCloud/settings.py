@@ -67,6 +67,7 @@ TEMPLATES = [
         'DIRS': [
             os.path.join(BASE_DIR, 'Cloud', 'templates'),
             os.path.join(BASE_DIR, 'Pokemons', 'templates'),
+            os.path.join(BASE_DIR, 'Accounts', 'templates'),
             os.path.join(BASE_DIR, 'templates'),
         ],
         'APP_DIRS': True,
@@ -203,4 +204,9 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
     'Accounts.pipeline.registration_complete',
+)
+SOCIAL_AUTH_DISCONNECT_PIPELINE = (
+    'social.pipeline.disconnect.get_entries',
+    'social.pipeline.disconnect.revoke_tokens',
+    'social.pipeline.disconnect.disconnect',
 )

@@ -5,6 +5,7 @@ from datetime import timedelta
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model, authenticate, login
+from django.contrib.auth.decorators import login_required
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage, send_mail
 from django.shortcuts import render, redirect
@@ -13,6 +14,7 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from social_django.models import UserSocialAuth
 
 from .forms import UserRegistrationForm, LoginForm
 from .models import OtpModel
@@ -120,7 +122,7 @@ def otp_verify_view(request):
                 verify_otp.save()
                 return redirect(reverse('login'))
 
-            login(request, verify_otp.user)
+            login(request, verify_otp.user, backend='django.contrib.auth.backends.ModelBackend')
             verify_otp.delete()
             verify_otp.save()
             return redirect(reverse('index'))
@@ -151,3 +153,10 @@ def registration_complete(request, user_id=None):
                 messages.error(request, error)
 
     return render(request, 'registration/register_complete.html', {'user': user})
+
+
+@login_required
+def account(request):
+    user = request.user
+    vk_linked = UserSocialAuth.objects.filter(user_id=user.id).exists()
+    return render(request, 'Account/account.html', context={'user': user, 'vk_linked': vk_linked})

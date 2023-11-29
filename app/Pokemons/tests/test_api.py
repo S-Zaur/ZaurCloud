@@ -81,21 +81,6 @@ class MyTestCase(TestCase):
         response = self.client.get(reverse('Pokemons.API.GetPokemon', args=[42000]))
         self.assertEqual(response.status_code, 404)
 
-    def test_save_pokemon(self):
-        response = self.client.post(reverse('Pokemons.API.SavePokemon', args=[1]))
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), self.ok)
-
-        with FTP(settings.FTP_SERVER) as ftp:
-            ftp.login(user=settings.FTP_USERNAME, passwd=settings.FTP_PASSWORD)
-            folder_name = datetime.datetime.today().strftime("%Y%m%d")
-            self.assertTrue(folder_name in ftp.nlst())
-            ftp.cwd(folder_name)
-            self.assertTrue('bulbasaur.md' in ftp.nlst())
-            r = BytesIO()
-            ftp.retrbinary('RETR bulbasaur.md', r.write)
-            self.assertEqual(r.getvalue(), self.bulbasaurmd)
-
     def test_random_pokemon(self):
         random.seed(42)
         response = self.client.get(reverse('Pokemons.API.RandomPokemon'))

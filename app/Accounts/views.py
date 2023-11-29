@@ -16,7 +16,7 @@ from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from social_django.models import UserSocialAuth
 
-from .forms import UserRegistrationForm, LoginForm
+from .forms import UserRegistrationForm, LoginForm, UserRegistrationViaForm
 from .models import OtpModel
 from .tokens import account_activation_token
 
@@ -140,7 +140,7 @@ def registration_complete(request, user_id=None):
     if user.is_active:
         return redirect(reverse('index'))
     if request.method == "POST":
-        form = UserRegistrationForm(request.POST)
+        form = UserRegistrationViaForm(request.POST)
         if form.is_valid():
             user.set_password(request.POST.get('password'))
             user.username = request.POST.get('username')
@@ -151,6 +151,7 @@ def registration_complete(request, user_id=None):
         else:
             for error in list(form.errors.values()):
                 messages.error(request, error)
+            return redirect(reverse('register'))
 
     return render(request, 'registration/register_complete.html', {'user': user})
 

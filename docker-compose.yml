@@ -10,48 +10,61 @@ services:
     env_file: .env
     command: >
       sh -c "python manage.py runserver 0.0.0.0:8000"
+    container_name: zaur-cloud
     depends_on:
-      - pgdb
-      - migrate
-      - test
-      - redis
-      - ftp
+      pgdb:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+      redis:
+        condition: service_started
+      ftp:
+        condition: service_started
 
   test:
     image: szaur/zaur-cloud
-    container_name: 'test'
+    container_name: test
     env_file: .env
     command: >
-      /bin/sh -c "python3 manage.py test --no-input; exit 0"
+      /bin/sh -c "python3 manage.py test --no-input"
     volumes:
       - ./app:/app
     depends_on:
-      - pgdb
+      pgdb:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+      django:
+        condition: service_started
 
   migrate:
     image: szaur/zaur-cloud
     container_name: 'migrate'
     env_file: .env
     command: >
-      /bin/sh -c "python3 manage.py makemigrations --force-color --no-input -v 3 && python3 manage.py makemigrations --force-color --no-input -v 3 && python3 manage.py migrate --force-color -v 3 && python3 manage.py createsuperuser --noinput; exit 0"
+      /bin/sh -c "python3 manage.py makemigrations --force-color --no-input -v 3 && python3 manage.py migrate --force-color -v 3 && python3 manage.py createsuperuser --noinput"
     volumes:
       - ./app:/app
     depends_on:
-      - pgdb
+      pgdb:
+        condition: service_healthy
 
   pgdb:
     image: postgres:13-alpine
     container_name: pgdb
     ports:
-      - 5432:5432
-    restart: unless-stopped
+      - "5433:5432"
     volumes:
       - pgdbdata:/var/lib/postgresql/data
     env_file: .env
+    healthcheck:
+      test: [ "CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'" ]
+      interval: 30s
+      timeout: 60s
+      retries: 5
 
   redis:
     image: redis:7.0-alpine
-    restart: always
     container_name: redis
     ports:
       - "6379:6379"
@@ -59,7 +72,6 @@ services:
 
   ftp:
     image: delfer/alpine-ftp-server:latest
-    restart: unless-stopped
     container_name: ftp
     ports:
       - "21:21"
@@ -68,11 +80,11 @@ services:
   grafana:
     image: grafana/grafana-enterprise
     container_name: grafana
-    restart: unless-stopped
     ports:
       - '3000:3000'
     volumes:
       - grafana-storage:/var/lib/grafana
+    env_file: .env
 
 volumes:
   pgdbdata: null

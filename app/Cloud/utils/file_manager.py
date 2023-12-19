@@ -5,8 +5,8 @@ import tempfile
 import uuid
 import zipfile
 
-from django.conf import settings
 from django.http import HttpResponse, JsonResponse
+from django.utils.encoding import escape_uri_path
 
 from Cloud.models import CloudObject, Clipboard
 from Cloud.utils.core import check_exists, get_dir_size, get_properties
@@ -28,16 +28,15 @@ def download(path):
         return download(zip_file_name)
     with open(path, 'rb') as file:
         mime_type, _ = mimetypes.guess_type(path)
+        mime_type = "application/octet-stream" if mime_type is None else mime_type
         response = HttpResponse(file, content_type=mime_type)
         response['Content-Length'] = os.path.getsize(path)
-        response['Content-Disposition'] = "attachment; filename=%s" % os.path.split(path)[-1]
+        response['Content-Disposition'] = "attachment; filename=" + escape_uri_path(os.path.split(path)[-1])
         return response
 
 
 @check_exists
 def delete(path):
-    if settings.DEBUG:
-        return JsonResponse({"result": "DEBUG"}, status=403)
     if os.path.isfile(path):
         os.remove(path)
     else:
@@ -149,5 +148,6 @@ def paste(path, user):
                 os.remove(obj.obj.real_path)
             else:
                 shutil.rmtree(obj.obj.real_path)
+    co.delete()
     result["result"] = "ok"
     return JsonResponse(result)

@@ -9,10 +9,11 @@ function createDirectorySubmitHandler(e) {
     } else {
         cb.prop("checked", false);
     }
+    const form = $("#create-directory-form")
     $.ajax({
         type: "POST",
-        url: window.location.href,
-        data: $("#create-directory-form").serialize(),
+        url: form.attr("action"),
+        data: form.serialize(),
         dataType: "json",
         success: function (data) {
             $('#grid').append($('<div>')

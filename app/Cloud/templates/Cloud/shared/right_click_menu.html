@@ -1,16 +1,15 @@
 {% load static %}
 <div id="menu">
-    <form method="get" id="download-form">
+    <form method="get" action="{% url 'Cloud.download' %}">
         {% csrf_token %}
         <label for="download-submit">
             <img src="{% static 'Cloud/images/menu_icons/download.png' %}" alt="download"/>
         </label>
         <input type="hidden" name="uuid" value="" class="form-uuid">
-        <input id="action-id" type="hidden" name="action" value="Download">
         <input id="download-submit" type="submit" value="Скачать"/>
     </form>
     {% if request.user.is_authenticated %}
-        <form method="get" id="properties-form">
+        <form method="get" id="properties-form" action="{% url 'Cloud.properties' %}">
             {% csrf_token %}
             <label for="properties-submit">
                 <img src="{% static 'Cloud/images/menu_icons/about.png' %}" alt="about"/>
@@ -19,22 +18,20 @@
             <input id="action-id" type="hidden" name="action" value="Properties">
             <input id="properties-submit" type="submit" value="Свойства"/>
         </form>
-        <form method="post" id="unshare-form">
+        <form method="post" id="unshare-form" action="{% url 'Cloud.delete_link' %}">
             {% csrf_token %}
             <label for="unshare-submit">
                 <img src="{% static 'Cloud/images/menu_icons/unshare.png' %}" alt="unshare"/>
             </label>
             <input type="hidden" name="uuid" value="" class="form-uuid">
-            <input id="action-id" type="hidden" name="action" value="Unshare">
             <input id="unshare-submit" type="submit" value="Удалить Доступ"/>
         </form>
-        <form method="get" id="go-to-form">
+        <form method="get" action="{% url 'Cloud.goto' %}">
             {% csrf_token %}
             <label for="go-to-submit">
                 <img src="{% static 'Cloud/images/menu_icons/goto.png' %}" alt="goto"/>
             </label>
             <input type="hidden" name="uuid" value="" class="form-uuid">
-            <input id="action-id" type="hidden" name="action" value="GoTo">
             <input id="go-to-submit" type="submit" value="Перейти к расположению"/>
         </form>
     {% endif %}

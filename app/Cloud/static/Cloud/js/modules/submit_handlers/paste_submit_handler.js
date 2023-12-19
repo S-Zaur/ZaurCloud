@@ -3,10 +3,11 @@ import {toast} from "../toast.js";
 
 function pasteSubmitHandler(e) {
     e.preventDefault();
+    const form = $("#paste-form")
     $.ajax({
         type: "POST",
-        url: window.location.href,
-        data: $("#paste-form").serialize(),
+        url: form.attr("action"),
+        data: form.serialize(),
         dataType: "json",
         success: function (data) {
             let exists = [];

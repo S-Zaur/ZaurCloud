@@ -16,8 +16,7 @@ def get_files_and_dirs(path):
     objects = []
     for it in os.listdir(path):
         curr_path = os.path.join(path, it)
-        if settings.SYSTEM == 'Windows' and os.stat(curr_path).st_file_attributes & 6 or \
-                settings.SYSTEM == 'Linux' and it[0] == '.':
+        if it[0] == '.':
             continue
         objects.append(CloudObject(real_path=curr_path))
 

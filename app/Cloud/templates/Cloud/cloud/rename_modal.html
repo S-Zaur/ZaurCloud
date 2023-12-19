@@ -6,12 +6,11 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body d-flex justify-content-center">
-                <form method="post" id="rename-form">
+                <form method="post" id="rename-form" action="{% url 'Cloud.rename' %}">
                     {% csrf_token %}
                     <label for="new-name">Новое имя</label>
                     <input type="hidden" name="url" value="" class="form-url">
                     <input id="new-name" type="text" name="new-name" value="">
-                    <input id="action-id" type="hidden" name="action" value="Rename">
                 </form>
             </div>
             <div class="modal-footer">

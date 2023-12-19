@@ -3,10 +3,11 @@ import {STATUS_CODES} from "../consts.js";
 
 function shareSubmitHandler(e) {
     e.preventDefault();
+    const form = $("#share-form")
     $.ajax({
         type: "POST",
-        url: window.location.href,
-        data: $("#share-form").serialize(),
+        url: form.attr("action"),
+        data: form.serialize(),
         dataType: "json",
         success: function (data) {
             if (navigator.clipboard) {

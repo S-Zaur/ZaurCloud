@@ -44,15 +44,15 @@ function handleDrop(e) {
 
 function uploadFiles(files) {
     let formData = new FormData()
-    const csrf = $("#upload-form").serialize().split("=")
-    formData.append(csrf[0], csrf[1])
-    formData.append("action", "Upload");
+    const form = $("#upload-form")
+    const csrf = form.serialize().split("=")
+    formData.append(csrf[0], csrf[1]);
     ([...files]).forEach((file) => {
         formData.append(file.name, file);
     })
     formData.append("url", $("#grid").attr("data-url"))
     $.ajax({
-        type: "POST", url: window.location.href, data: formData, success: function (data) {
+        type: "POST", url: form.attr("action"), data: formData, success: function (data) {
             let exists = [];
             data.files.forEach((file) => {
                 if ("exists" in file) {

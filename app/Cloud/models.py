@@ -37,7 +37,7 @@ class CloudObject(models.Model):
             return
         path = kwargs["real_path"]
         self.real_path = path
-        self.path = path.replace(settings.STORAGE_DIRECTORY, "").replace('\\', '/')
+        self.path = path.replace(settings.STORAGE_DIRECTORY + "/", "").replace('\\', '/')
         self.name = os.path.split(path)[1]
         self.is_file = os.path.isfile(path)
         self.ext = os.path.splitext(path)[1][1:].lower()

@@ -8,10 +8,12 @@ function renameSubmitHandler(e) {
     const title = current.find(".card-title")
     const name = $("#new-name").val()
     if (title.text() === name) return;
+    const form = $("#rename-form")
+
     $.ajax({
         type: "POST",
-        url: window.location.href,
-        data: $("#rename-form").serialize(),
+        url: form.attr("action"),
+        data: form.serialize(),
         dataType: "json",
         success: function (data) {
             if (currentElem == null) {

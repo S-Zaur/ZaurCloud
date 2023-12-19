@@ -2,10 +2,11 @@ import {STATUS_CODES} from "../consts.js";
 
 function cutSubmitHandler(e) {
     e.preventDefault();
+    const form = $("#cut-form")
     $.ajax({
         type: "POST",
-        url: window.location.href,
-        data: $("#cut-form").serialize(),
+        url: form.attr("action"),
+        data: form.serialize(),
         dataType: "json",
         statusCode: STATUS_CODES,
     });

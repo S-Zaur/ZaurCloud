@@ -2,10 +2,11 @@ import {STATUS_CODES} from "../consts.js";
 
 export function propertiesSubmitHandler(e) {
     e.preventDefault();
+    const form = $("#properties-form")
     $.ajax({
         type: "GET",
-        url: window.location.href,
-        data: $("#properties-form").serialize(),
+        url: form.attr('action'),
+        data: form.serialize(),
         dataType: "json",
         success: function (data) {
             const tbody = $("<tbody>")

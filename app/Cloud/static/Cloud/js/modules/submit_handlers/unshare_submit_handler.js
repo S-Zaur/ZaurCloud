@@ -4,10 +4,11 @@ import {STATUS_CODES} from "../consts.js";
 
 function unshareSubmitHandler(e) {
     e.preventDefault();
+    const form = $("#unshare-form")
     $.ajax({
         type: "POST",
-        url: window.location.href,
-        data: $("#unshare-form").serialize(),
+        url: form.attr('action'),
+        data: form.serialize(),
         dataType: "json",
         success: function (data) {
             toast("Ссылка удалена");

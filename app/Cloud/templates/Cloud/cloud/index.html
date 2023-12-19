@@ -1,28 +1,16 @@
-<!doctype html>
-<html lang="en" class="min-vh-100">
-<head>
-    <title>{{ name|default:"ZaurCloud" }}</title>
-    {% load static %}
-    <link rel="stylesheet" type="text/css" href="{% static 'styles/bootstrap.min.css' %}">
-    <link rel="shortcut icon" type="image/ico" href="{% static 'images/favicon.ico' %}">
-    <script type="text/javascript" src="{% static 'js/jquery.js' %}"></script>
-    <script type="text/javascript" src="{% static 'js/bootstrap.min.js' %}"></script>
+{% extends "Cloud/base.html" %}
+{% load static %}
+{% block title %}
+    {{ name|default:"ZaurCloud" }}
+{% endblock title %}
+{% block head_additional %}
     <script type="module" src="{% static 'Cloud/js/index.js' %}"></script>
-</head>
-
-<body>
-{% include "Cloud/nav.html" %}
-<div class="d-flex flex-row flex-grow-1">
-    {% include 'Cloud/sidebar.html' %}
-    <div class="position-relative w-100" id="main-container"
-         style="height:calc(100vh - 70px);overflow: auto;overflow-x: hidden">
-        {% include 'Cloud/grid.html' %}
-        {% include "Cloud/drop_area.html" %}
-    </div>
-</div>
-{% include "Cloud/cloud/right_click_menu.html" %}
-{% include "Cloud/toast.html" %}
-{% include "Cloud/cloud/rename_modal.html" %}
-{% include "Cloud/modal.html" %}
-</body>
-</html>
+{% endblock head_additional %}
+{% block content %}
+    {% include 'Cloud/grid.html' %}
+    {% include "Cloud/drop_area.html" %}
+{% endblock content %}
+{% block body_additional %}
+    {% include "Cloud/cloud/right_click_menu.html" %}
+    {% include "Cloud/cloud/rename_modal.html" %}
+{% endblock body_additional %}

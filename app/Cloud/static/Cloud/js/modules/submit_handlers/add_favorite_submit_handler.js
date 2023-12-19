@@ -3,10 +3,11 @@ import {STATUS_CODES} from "../consts.js";
 
 function addFavoriteSubmitHandler(e) {
     e.preventDefault();
+    const form = $("#add-to-favorite-form")
     $.ajax({
         type: "POST",
-        url: window.location.href,
-        data: $("#add-to-favorite-form").serialize(),
+        url: form.attr("action"),
+        data: form.serialize(),
         dataType: "json",
         success: function (data) {
             if (data.result === "Already added") {

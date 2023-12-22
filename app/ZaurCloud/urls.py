@@ -23,5 +23,4 @@ urlpatterns = [
     path('cloud/', include("Cloud.urls")),
     path('accounts/', include('Accounts.urls')),
     path('accounts/', include('django.contrib.auth.urls')),
-    path('pokemons/', include('Pokemons.urls')),
 ]

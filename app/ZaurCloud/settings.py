@@ -31,7 +31,7 @@ SECRET_KEY = 'django-insecure-5jxhh((7f&!ug4=)&zcw-ermj=9ht+$#+bu0#+d!_x#9vpne)f
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '192.168.145.85', '192.168.31.42']
+ALLOWED_HOSTS = []
 
 # Application definition
 
@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'Accounts',
     'Cloud',
-    'Pokemons',
     'social_django',
     'social.apps.django_app.default',
 ]
@@ -66,7 +65,6 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
             os.path.join(BASE_DIR, 'Cloud', 'templates'),
-            os.path.join(BASE_DIR, 'Pokemons', 'templates'),
             os.path.join(BASE_DIR, 'Accounts', 'templates'),
             os.path.join(BASE_DIR, 'templates'),
         ],
@@ -144,7 +142,6 @@ STATIC_URL = 'static/'
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
     os.path.join(BASE_DIR, 'Cloud', 'static'),
-    os.path.join(BASE_DIR, 'Pokemons', 'static'),
 )
 
 CACHES = {
@@ -177,11 +174,6 @@ EMAIL_USE_SSL = True
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 
-# FTP Settings
-FTP_SERVER = os.getenv("FTP_SERVER")
-FTP_USERNAME = os.getenv("FTP_USERNAME")
-FTP_PASSWORD = os.getenv("FTP_PASSWORD")
-
 # Auth Settings
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 OTP_TIMEOUT = 900
@@ -190,7 +182,7 @@ OTP_TIMEOUT = 900
 SOCIAL_AUTH_VK_OAUTH2_KEY = os.getenv('SOCIAL_AUTH_VK_OAUTH2_KEY')
 SOCIAL_AUTH_VK_OAUTH2_SECRET = os.getenv('SOCIAL_AUTH_VK_OAUTH2_SECRET')
 SOCIAL_AUTH_VK_OAUTH2_SCOPE = ['email']
-SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/pokemons/'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/cloud/'
 SOCIAL_AUTH_NEW_USER_REDIRECT_URL = '/accounts/register/'
 SOCIAL_AUTH_URL_NAMESPACE = 'social'
 SOCIAL_AUTH_PIPELINE = (

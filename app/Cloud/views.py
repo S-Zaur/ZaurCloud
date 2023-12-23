@@ -72,6 +72,11 @@ def delete(request):
 @check_permissions
 def rename(request):
     file_path = parse_url(request.POST["url"])
+    new_name = request.POST["new-name"]
+    if len(new_name) == 0:
+        return JsonResponse({"error": "Имя файла не может быть пустым"}, status=400)
+    if new_name[0] == '.':
+        return JsonResponse({"error": "Имя файла не может начинаться с '.'"}, status=400)
     return file_manager.rename(file_path, request.POST["new-name"])
 
 

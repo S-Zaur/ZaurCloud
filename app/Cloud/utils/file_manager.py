@@ -16,7 +16,7 @@ from Cloud.utils.core import check_exists, get_dir_size, get_properties
 def download(path):
     if os.path.isdir(path):
         if get_dir_size(path) > 1e9:
-            return JsonResponse({"result": "Downloadable object too large"}, status=403)
+            return JsonResponse({"error": "Скачиваемая папка слишком большая"}, status=403)
         zip_file_name = os.path.join(tempfile.gettempdir(), str(uuid.uuid4()) + ".zip")
         with zipfile.ZipFile(zip_file_name, 'w') as zipObj:
             for folderName, subFolders, filenames in os.walk(path):

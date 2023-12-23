@@ -1,5 +1,4 @@
 import {mainContainer, STATUS_CODES} from "./consts.js";
-import {toast} from "./toast.js";
 
 const dropArea = document.getElementById("drop-area")
 
@@ -53,32 +52,22 @@ function uploadFiles(files) {
     formData.append("url", $("#grid").attr("data-url"))
     $.ajax({
         type: "POST", url: form.attr("action"), data: formData, success: function (data) {
-            let exists = [];
             data.files.forEach((file) => {
-                if ("exists" in file) {
-                    exists.push(file.name);
-                } else {
-                    $('#grid').append($('<div>')
-                        .addClass("col d-flex align-items-stretch mb-3")
-                        .append($('<div>')
-                            .addClass("card")
-                            .attr("data-url", file.rel_url)
-                            .append($("<img>")
-                                .addClass("card-img-top img-fluid img-thumbnail")
-                                .attr("src", file.img)
-                                .attr("alt", "object"))
-                            .append($("<div>")
-                                .addClass("card-body")
-                                .append($("<h5>")
-                                    .addClass("card-title")
-                                    .text(file.name)))));
-                }
+                $('#grid').append($('<div>')
+                    .addClass("col d-flex align-items-stretch mb-3")
+                    .append($('<div>')
+                        .addClass("card")
+                        .attr("data-url", file.rel_url)
+                        .append($("<img>")
+                            .addClass("card-img-top img-fluid img-thumbnail")
+                            .attr("src", file.img)
+                            .attr("alt", "object"))
+                        .append($("<div>")
+                            .addClass("card-body")
+                            .append($("<h5>")
+                                .addClass("card-title")
+                                .text(file.name)))));
             });
-            if (exists.length > 0) {
-                toast("Файлы: " + exists.join(", ") + " уже существуют, для замены удалите их")
-            } else {
-                toast("OK")
-            }
         }, processData: false, contentType: false, statusCode: STATUS_CODES,
     });
 }

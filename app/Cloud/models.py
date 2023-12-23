@@ -48,6 +48,11 @@ class CloudObject(models.Model):
     def __eq__(self, other):
         return other.path == self.path
 
+    def __hash__(self):
+        if self.pk is None:
+            return hash(self.nom)
+        return super().__hash__()
+
     def __lt__(self, other):
         if not self.is_file and other.is_file:
             return True
@@ -80,9 +85,3 @@ class Shared(models.Model):
 
     def get_absolute_url(self):
         return reverse('Cloud.shared', args=[self.uuid])
-
-
-class Clipboard(models.Model):
-    obj = models.ForeignKey(CloudObject, on_delete=models.CASCADE)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    cut = models.BooleanField(default=False)

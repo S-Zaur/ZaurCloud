@@ -2,7 +2,7 @@ import os
 import urllib.parse
 
 from django.core.exceptions import SuspiciousOperation
-from django.http import JsonResponse
+from django.http import Http404, JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 
@@ -18,11 +18,11 @@ def open_dir(request, path=""):
         raise SuspiciousOperation("Cannot open files")
     objects = get_files_and_dirs(file_path)
     obj = CloudObject(real_path=file_path)
-    return render(request, 'Cloud/cloud/index.html', context={
-        "objects": objects,
-        "name": obj.name,
-        "url": obj.get_rel_url()
-    })
+    return render(
+        request,
+        "Cloud/cloud/index.html",
+        context={"objects": objects, "name": obj.name, "url": obj.get_rel_url()},
+    )
 
 
 @check_permissions
@@ -75,25 +75,31 @@ def rename(request):
     new_name = request.POST["new-name"]
     if len(new_name) == 0:
         return JsonResponse({"error": "Имя файла не может быть пустым"}, status=400)
-    if new_name[0] == '.':
-        return JsonResponse({"error": "Имя файла не может начинаться с '.'"}, status=400)
+    if new_name[0] == ".":
+        return JsonResponse(
+            {"error": "Имя файла не может начинаться с '.'"}, status=400
+        )
     return file_manager.rename(file_path, request.POST["new-name"])
 
 
 @check_permissions
 def favorites(request):
-    objects = CloudObject.objects.filter(
-        favorites__user_id=request.user.id
+    objects = CloudObject.objects.filter(favorites__user_id=request.user.id)
+    return render(
+        request,
+        "Cloud/favorites/index.html",
+        context={
+            "objects": objects,
+            "name": "Избранное",
+        },
     )
-    return render(request, 'Cloud/favorites/index.html', context={
-        "objects": objects,
-        "name": "Избранное",
-    })
 
 
 @check_permissions
 def add_to_favorites(request):
     file_path = parse_url(request.POST["url"])
+    if not os.path.exists(file_path):
+        raise Http404
     co, _ = CloudObject.objects.get_or_create(real_path=file_path)
     fv, created = Favorites.objects.get_or_create(obj=co, user=request.user)
     if not created:
@@ -104,57 +110,81 @@ def add_to_favorites(request):
 @check_permissions
 def remove_from_favorites(request):
     file_path = parse_url(request.POST["url"])
-    (Favorites.objects.filter(user_id=request.user.id) & Favorites.objects.filter(
-        obj__real_path=file_path)).delete()
+    if not os.path.exists(file_path):
+        raise Http404
+    (
+        Favorites.objects.filter(user_id=request.user.id)
+        & Favorites.objects.filter(obj__real_path=file_path)
+    ).delete()
     return JsonResponse({"result": "ok"})
 
 
 @check_permissions
 def shared_all(request):
     objects = Shared.objects.filter(parent=None)
-    return render(request, 'Cloud/shared/index.html', context={
-        "objects": objects,
-        "name": "Общее",
-    })
+    return render(
+        request,
+        "Cloud/shared/index.html",
+        context={
+            "objects": objects,
+            "name": "Общее",
+        },
+    )
 
 
 def shared(request, uuid):
     objects = get_object_or_404(Shared, uuid=uuid)
     if not objects.obj.is_file:
         objects = Shared.objects.filter(parent_id=uuid)
-        return render(request, 'Cloud/shared/index.html', context={
-            "objects": objects,
-            "name": CloudObject.objects.get(shared__uuid=uuid).name,
-            "uuid": uuid
-        })
-    return render(request, 'Cloud/shared/index.html', context={
-        "objects": [objects],
-        "name": objects.obj.name,
-        "uuid": uuid
-    })
+        return render(
+            request,
+            "Cloud/shared/index.html",
+            context={
+                "objects": objects,
+                "name": CloudObject.objects.get(shared__uuid=uuid).name,
+                "uuid": uuid,
+            },
+        )
+    return render(
+        request,
+        "Cloud/shared/index.html",
+        context={"objects": [objects], "name": objects.obj.name, "uuid": uuid},
+    )
 
 
 @check_permissions
 def create_shareable_link(request):
     file_path = parse_url(request.POST["url"])
+    if not os.path.exists(file_path):
+        raise Http404
     co, _ = CloudObject.objects.get_or_create(real_path=file_path)
     res, _ = Shared.objects.get_or_create(obj_id=co.id)
     if co.is_file:
-        return JsonResponse({"result": "ok", "url": reverse("Cloud.shared", args=[res.uuid])})
+        return JsonResponse(
+            {"result": "ok", "url": reverse("Cloud.shared", args=[res.uuid])}
+        )
     for addr, dirs, files in os.walk(file_path):
         s = Shared.objects.get(obj__real_path=addr)
         for directory in dirs:
-            co, _ = CloudObject.objects.get_or_create(real_path=os.path.join(addr, directory))
+            co, _ = CloudObject.objects.get_or_create(
+                real_path=os.path.join(addr, directory)
+            )
             Shared.objects.get_or_create(obj=co, parent=s)
         for file in files:
-            co, _ = CloudObject.objects.get_or_create(real_path=os.path.join(addr, file))
+            co, _ = CloudObject.objects.get_or_create(
+                real_path=os.path.join(addr, file)
+            )
             Shared.objects.get_or_create(obj=co, parent=s)
-    return JsonResponse({"result": "ok", "url": reverse("Cloud.shared", args=[res.uuid])})
+    return JsonResponse(
+        {"result": "ok", "url": reverse("Cloud.shared", args=[res.uuid])}
+    )
 
 
 @check_permissions
 def delete_shareable_link(request):
-    file_path = parse_url(CloudObject.objects.get(shared__uuid=request.POST["uuid"]).path)
+    file_path = parse_url(
+        CloudObject.objects.get(shared__uuid=request.POST["uuid"]).path
+    )
     Shared.objects.get(obj__real_path=file_path).delete()
     return JsonResponse({"result": "ok"})
 
@@ -166,6 +196,8 @@ def goto(request):
     else:
         path = CloudObject.objects.get(shared__uuid=request.GET["uuid"]).path
 
+    if not os.path.exists(path):
+        raise Http404
     url = os.path.split(path)[0]
     if url == "":
         return redirect(reverse("Cloud.index"))

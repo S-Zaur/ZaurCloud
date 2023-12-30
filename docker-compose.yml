@@ -29,9 +29,7 @@ services:
     depends_on:
       pgdb:
         condition: service_healthy
-      migrate:
-        condition: service_completed_successfully
-      django:
+      redis:
         condition: service_started
 
   migrate:
@@ -55,8 +53,11 @@ services:
       - pgdbdata:/var/lib/postgresql/data
     env_file: .env
     healthcheck:
-      test: [ "CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'" ]
-
+      test:
+        [
+          "CMD-SHELL",
+          "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'"
+        ]
 
   redis:
     image: redis:7.0-alpine

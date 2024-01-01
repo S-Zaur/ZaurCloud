@@ -7,7 +7,7 @@ import zipfile
 
 from django.conf import settings
 from django.core.cache import cache
-from django.http import HttpResponse, JsonResponse
+from django.http import Http404, HttpResponse, JsonResponse
 from django.utils.encoding import escape_uri_path
 
 from Cloud.models import CloudObject
@@ -43,7 +43,7 @@ def download(path):
 
 @check_exists
 def delete(path):
-    CloudObject.objects.get(real_path=path).delete()
+    CloudObject.objects.filter(real_path=path).delete()
     if os.path.isfile(path):
         os.remove(path)
     else:
@@ -55,12 +55,13 @@ def delete(path):
 def rename(path, name):
     name = os.path.join(os.path.split(path)[0], name)
     os.rename(path, name)
-    obj = CloudObject.objects.get(real_path=os.path.join(path))
-    obj.real_path = name
-    obj.path = name.replace(settings.STORAGE_DIRECTORY + "/", "").replace('\\', '/')
-    obj.name = os.path.split(name)[1]
-    obj.ext = os.path.splitext(name)[1][1:].lower()
-    obj.save()
+    obj = CloudObject.objects.filter(real_path=path).first()
+    if obj:
+        obj.real_path = name
+        obj.path = name.replace(settings.STORAGE_DIRECTORY + "/", "").replace('\\', '/')
+        obj.name = os.path.split(name)[1]
+        obj.ext = os.path.splitext(name)[1][1:].lower()
+        obj.save()
     obj = CloudObject(real_path=name)
     return JsonResponse({
         "result": "ok",
@@ -89,6 +90,8 @@ def get_unique_name(path, name):
 
 def create_directory(path):
     file_path = os.path.split(path)[0]
+    if not os.path.exists(file_path):
+        raise Http404
     path = os.path.join(file_path, get_unique_name(file_path, "Новая папка"))
     os.mkdir(path)
     obj = CloudObject(real_path=path)
@@ -100,7 +103,7 @@ def create_directory(path):
         "abs_url": obj.get_absolute_url(),
     })
 
-
+@check_exists
 def upload(path, files):
     result = {"files": []}
     for filename, file in files.items():

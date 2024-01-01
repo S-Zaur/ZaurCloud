@@ -6,7 +6,7 @@ import urllib.parse
 from django.conf import settings
 from django.core.exceptions import PermissionDenied
 from django.http import Http404
-from django.shortcuts import redirect
+from django.shortcuts import render
 from django.urls import reverse
 
 from Cloud.models import CloudObject
@@ -16,7 +16,7 @@ def get_files_and_dirs(path):
     objects = []
     for it in os.listdir(path):
         curr_path = os.path.join(path, it)
-        if it[0] == '.':
+        if it[0] == ".":
             continue
         objects.append(CloudObject(real_path=curr_path))
 
@@ -24,27 +24,35 @@ def get_files_and_dirs(path):
 
 
 def check_permissions(func):
-    def wrapper(request, **kwargs):
-        path = kwargs['path'] if (len(kwargs) == 1) else ''
+    def wrapper(request, *args, **kwargs):
+        path = kwargs["path"] if (len(kwargs) == 1) else ""
         file_path = os.path.normpath(os.path.join(settings.STORAGE_DIRECTORY, path))
         if not request.user.is_authenticated:
-            return redirect(reverse('login') + '?next=' + reverse('Cloud.open_dir', args=[path])) \
-                if path != "" else redirect(reverse('login') + '?next=' + reverse('Cloud.index'))
+            return render(
+                request,
+                "errors/401.html",
+                context={
+                    "next": reverse("Cloud.open_dir", args=[path])
+                    if path != ""
+                    else reverse("Cloud.index")
+                },
+                status=401,
+            )
         if not os.path.exists(file_path):
             raise Http404
         if settings.STORAGE_DIRECTORY not in file_path:
             raise PermissionDenied
-        return func(request, **kwargs)
+        return func(request, *args, **kwargs)
 
     return wrapper
 
 
 def check_exists(func):
-    def wrapper(path, *args):
+    def wrapper(path, *args, **kwargs):
         file_path = os.path.normpath(os.path.join(settings.STORAGE_DIRECTORY, path))
         if not os.path.exists(file_path):
             raise Http404
-        return func(file_path, *args)
+        return func(file_path, *args, **kwargs)
 
     return wrapper
 
@@ -71,17 +79,27 @@ def get_properties(path):
     properties = {}
     is_file = os.path.isfile(path)
     properties["Имя"] = os.path.split(path)[1]
-    properties["Тип"] = f"Файл \"{os.path.splitext(path)[1][1:].upper()}\"" if is_file else "Папка"
-    properties["Расположение"] = os.path.split(path)[0].replace(settings.STORAGE_DIRECTORY, "").replace("\\", "/")
-    properties["Размер"] = convert_size(os.path.getsize(path) if is_file else get_dir_size(path))
-    if not is_file:
+    properties["Тип"] = (
+        f'Файл "{os.path.splitext(path)[1][1:].upper()}"' if is_file else "Папка"
+    )
+    properties["Расположение"] = (
+        os.path.split(path)[0]
+        .replace(settings.STORAGE_DIRECTORY, "")
+        .replace("\\", "/")
+    )
+    properties["Размер"] = convert_size(
+        os.path.getsize(path) if is_file else get_dir_size(path)
+    )
+    if is_file:
+        properties["Открыт"] = time.strftime(
+            "%d %B %Y %X", time.localtime(os.path.getatime(path))
+        )
+        properties["Изменен"] = time.strftime(
+            "%d %B %Y %X", time.localtime(os.path.getmtime(path))
+        )
+    else:
         cnt = get_dirs_and_files_count(path)
         properties["Содержит"] = f"Файлов: {cnt[1]}; папок: {cnt[0]}"
-    if settings.SYSTEM == 'Windows':
-        properties["Создан"] = time.strftime("%d %B %Y %X", time.localtime(os.path.getctime(path)))
-    if is_file:
-        properties["Открыт"] = time.strftime("%d %B %Y %X", time.localtime(os.path.getatime(path)))
-        properties["Изменен"] = time.strftime("%d %B %Y %X", time.localtime(os.path.getmtime(path)))
     return properties
 
 
@@ -96,4 +114,6 @@ def convert_size(size_bytes):
 
 
 def parse_url(url):
-    return os.path.normpath(os.path.join(settings.STORAGE_DIRECTORY, urllib.parse.unquote(url)))
+    return os.path.normpath(
+        os.path.join(settings.STORAGE_DIRECTORY, urllib.parse.unquote(url))
+    )

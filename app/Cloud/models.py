@@ -6,21 +6,36 @@ from django.db import models
 from django.urls import reverse
 
 ICONS = {
-    'css': 'Cloud/images/format_icons/css.png', 'csv': 'Cloud/images/format_icons/csv.png',
-    'dll': 'Cloud/images/format_icons/dll.png', 'doc': 'Cloud/images/format_icons/doc.png',
-    'docx': 'Cloud/images/format_icons/doc.png', 'dwg': 'Cloud/images/format_icons/dwg.png',
-    'exe': 'Cloud/images/format_icons/exe.png', 'flac': 'Cloud/images/format_icons/flac.png',
-    'gif': 'Cloud/images/format_icons/gif.png', 'htm': 'Cloud/images/format_icons/htm.png',
-    'html': 'Cloud/images/format_icons/htm.png', 'ico': 'Cloud/images/format_icons/ico.png',
-    'iso': 'Cloud/images/format_icons/iso.png', 'jpg': 'Cloud/images/format_icons/jpg.png',
-    'json': 'Cloud/images/format_icons/json.png', 'mkv': 'Cloud/images/format_icons/mkv.png',
-    'mp3': 'Cloud/images/format_icons/mp3.png', 'mp4': 'Cloud/images/format_icons/mp4.png',
-    'pdf': 'Cloud/images/format_icons/pdf.png', 'pkt': 'Cloud/images/format_icons/pkt.png',
-    'png': 'Cloud/images/format_icons/png.png', 'ppt': 'Cloud/images/format_icons/ppt.png',
-    'pptx': 'Cloud/images/format_icons/ppt.png', 'txt': 'Cloud/images/format_icons/txt.png',
-    'wav': 'Cloud/images/format_icons/wav.png', 'xls': 'Cloud/images/format_icons/xls.png',
-    'xlsx': 'Cloud/images/format_icons/xls.png', 'xml': 'Cloud/images/format_icons/xml.png',
-    'zip': 'Cloud/images/format_icons/zip.png', '7z': 'Cloud/images/format_icons/zip.png'
+    "css": "Cloud/images/format_icons/css.png",
+    "csv": "Cloud/images/format_icons/csv.png",
+    "dll": "Cloud/images/format_icons/dll.png",
+    "doc": "Cloud/images/format_icons/doc.png",
+    "docx": "Cloud/images/format_icons/doc.png",
+    "dwg": "Cloud/images/format_icons/dwg.png",
+    "exe": "Cloud/images/format_icons/exe.png",
+    "flac": "Cloud/images/format_icons/flac.png",
+    "gif": "Cloud/images/format_icons/gif.png",
+    "htm": "Cloud/images/format_icons/htm.png",
+    "html": "Cloud/images/format_icons/htm.png",
+    "ico": "Cloud/images/format_icons/ico.png",
+    "iso": "Cloud/images/format_icons/iso.png",
+    "jpg": "Cloud/images/format_icons/jpg.png",
+    "json": "Cloud/images/format_icons/json.png",
+    "mkv": "Cloud/images/format_icons/mkv.png",
+    "mp3": "Cloud/images/format_icons/mp3.png",
+    "mp4": "Cloud/images/format_icons/mp4.png",
+    "pdf": "Cloud/images/format_icons/pdf.png",
+    "pkt": "Cloud/images/format_icons/pkt.png",
+    "png": "Cloud/images/format_icons/png.png",
+    "ppt": "Cloud/images/format_icons/ppt.png",
+    "pptx": "Cloud/images/format_icons/ppt.png",
+    "txt": "Cloud/images/format_icons/txt.png",
+    "wav": "Cloud/images/format_icons/wav.png",
+    "xls": "Cloud/images/format_icons/xls.png",
+    "xlsx": "Cloud/images/format_icons/xls.png",
+    "xml": "Cloud/images/format_icons/xml.png",
+    "zip": "Cloud/images/format_icons/zip.png",
+    "7z": "Cloud/images/format_icons/zip.png",
 }
 
 
@@ -37,8 +52,12 @@ class CloudObject(models.Model):
             return
         path = kwargs["real_path"]
         self.real_path = path
-        self.path = path.replace(settings.STORAGE_DIRECTORY + "/", "").replace('\\', '/')
-        self.name = os.path.split(path)[1]
+        self.path = path.replace(settings.STORAGE_DIRECTORY + "/", "").replace(
+            "\\", "/"
+        )
+        i = self.path.find("/", 1)
+        self.path = self.path[i + 1 :] if i != -1 else ""
+        self.name = os.path.split(self.path)[1]
         self.is_file = os.path.isfile(path)
         self.ext = os.path.splitext(path)[1][1:].lower()
 
@@ -61,15 +80,23 @@ class CloudObject(models.Model):
         return self.name < other.name
 
     def get_absolute_url(self):
-        return reverse('Cloud.open_dir', args=[self.path]) if self.path != "" else reverse('Cloud.index')
+        return (
+            reverse("Cloud.open_dir", args=[self.path])
+            if self.path != ""
+            else reverse("Cloud.index")
+        )
 
     def get_rel_url(self):
-        path = reverse('Cloud.open_dir', args=[self.path]) if self.path != "" else reverse('Cloud.index')
-        return path[path.find('/', 1) + 1:]
+        path = (
+            reverse("Cloud.open_dir", args=[self.path])
+            if self.path != ""
+            else reverse("Cloud.index")
+        )
+        return path[path.find("/", 1) + 1 :]
 
     def get_icon(self):
         if not self.is_file:
-            return 'Cloud/images/folder.png'
+            return "Cloud/images/folder.png"
         return ICONS.get(self.ext, "Cloud/images/file.png")
 
 
@@ -84,4 +111,4 @@ class Shared(models.Model):
     obj = models.ForeignKey(CloudObject, on_delete=models.CASCADE)
 
     def get_absolute_url(self):
-        return reverse('Cloud.shared', args=[self.uuid])
+        return reverse("Cloud.shared", args=[self.uuid])

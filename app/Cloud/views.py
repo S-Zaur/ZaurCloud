@@ -13,7 +13,7 @@ from Cloud.utils.core import get_files_and_dirs, check_permissions, parse_url
 
 @check_permissions
 def open_dir(request, path=""):
-    file_path = parse_url(path)
+    file_path = parse_url(request.user, path)
     if os.path.isfile(file_path):
         raise SuspiciousOperation("Cannot open files")
     objects = get_files_and_dirs(file_path)
@@ -27,25 +27,25 @@ def open_dir(request, path=""):
 
 @check_permissions
 def upload(request):
-    file_path = parse_url(request.POST["url"])
+    file_path = parse_url(request.user, request.POST["url"])
     return file_manager.upload(file_path, request.FILES)
 
 
 @check_permissions
 def download(request):
-    file_path = parse_url(request.GET["url"])
+    file_path = parse_url(request.user, request.GET["url"])
     return file_manager.download(file_path)
 
 
 @check_permissions
 def properties(request):
-    file_path = parse_url(request.GET["url"])
+    file_path = parse_url(request.user, request.GET["url"])
     return file_manager.properties(file_path)
 
 
 @check_permissions
 def create_directory(request):
-    file_path = parse_url(request.POST["url"])
+    file_path = parse_url(request.user, request.POST["url"])
     if "in-place" in request.POST:
         file_path = os.path.join(file_path, "HelloWorld")
     return file_manager.create_directory(file_path)
@@ -53,25 +53,25 @@ def create_directory(request):
 
 @check_permissions
 def copy(request):
-    file_path = parse_url(request.POST["url"])
+    file_path = parse_url(request.user, request.POST["url"])
     return file_manager.copy(file_path, request.POST["cut"], request.user)
 
 
 @check_permissions
 def paste(request):
-    file_path = parse_url(request.POST["url"])
+    file_path = parse_url(request.user, request.POST["url"])
     return file_manager.paste(file_path, request.user)
 
 
 @check_permissions
 def delete(request):
-    file_path = parse_url(request.POST["url"])
+    file_path = parse_url(request.user, request.POST["url"])
     return file_manager.delete(file_path)
 
 
 @check_permissions
 def rename(request):
-    file_path = parse_url(request.POST["url"])
+    file_path = parse_url(request.user, request.POST["url"])
     new_name = request.POST["new-name"]
     if len(new_name) == 0:
         return JsonResponse({"error": "Имя файла не может быть пустым"}, status=400)
@@ -97,7 +97,7 @@ def favorites(request):
 
 @check_permissions
 def add_to_favorites(request):
-    file_path = parse_url(request.POST["url"])
+    file_path = parse_url(request.user, request.POST["url"])
     if not os.path.exists(file_path):
         raise Http404
     co, _ = CloudObject.objects.get_or_create(real_path=file_path)
@@ -109,7 +109,7 @@ def add_to_favorites(request):
 
 @check_permissions
 def remove_from_favorites(request):
-    file_path = parse_url(request.POST["url"])
+    file_path = parse_url(request.user, request.POST["url"])
     if not os.path.exists(file_path):
         raise Http404
     (
@@ -154,7 +154,7 @@ def shared(request, uuid):
 
 @check_permissions
 def create_shareable_link(request):
-    file_path = parse_url(request.POST["url"])
+    file_path = parse_url(request.user, request.POST["url"])
     if not os.path.exists(file_path):
         raise Http404
     co, _ = CloudObject.objects.get_or_create(real_path=file_path)
@@ -183,7 +183,7 @@ def create_shareable_link(request):
 @check_permissions
 def delete_shareable_link(request):
     file_path = parse_url(
-        CloudObject.objects.get(shared__uuid=request.POST["uuid"]).path
+        request.user, CloudObject.objects.get(shared__uuid=request.POST["uuid"]).path
     )
     Shared.objects.get(obj__real_path=file_path).delete()
     return JsonResponse({"result": "ok"})

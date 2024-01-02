@@ -1,4 +1,5 @@
 import math
+import os
 import random
 from datetime import timedelta
 
@@ -26,32 +27,40 @@ def register(request):
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            user.set_password(form.cleaned_data['password'])
+            user.set_password(form.cleaned_data["password"])
             user.is_active = False
             user.save()
-            activate_email(request, user, form.cleaned_data.get('email'))
-            return render(request, 'registration/register_done.html', {'new_user': user})
+            activate_email(request, user, form.cleaned_data.get("email"))
+            return render(
+                request, "registration/register_done.html", {"new_user": user}
+            )
         else:
             for error in list(form.errors.values()):
                 messages.error(request, error)
     else:
         form = UserRegistrationForm()
 
-    return render(request, 'registration/register.html', {'user_form': form})
+    return render(request, "registration/register.html", {"user_form": form})
 
 
 def activate_email(request, user, to_email):
-    mail_subject = 'Activate your user account.'
-    message = render_to_string('registration/template_activate_account.html', {
-        'user': user.username,
-        'domain': get_current_site(request).domain,
-        'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-        'token': account_activation_token.make_token(user),
-        'protocol': 'https' if request.is_secure() else 'http'
-    })
+    mail_subject = "Activate your user account."
+    message = render_to_string(
+        "registration/template_activate_account.html",
+        {
+            "user": user.username,
+            "domain": get_current_site(request).domain,
+            "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+            "token": account_activation_token.make_token(user),
+            "protocol": "https" if request.is_secure() else "http",
+        },
+    )
     email = EmailMessage(mail_subject, message, to=[to_email])
     if not email.send():
-        messages.error(request, f'Problem sending confirmation email to {to_email}, check if you typed it correctly.')
+        messages.error(
+            request,
+            f"Problem sending confirmation email to {to_email}, check if you typed it correctly.",
+        )
 
 
 def activate(request, uidb64, token):
@@ -59,45 +68,49 @@ def activate(request, uidb64, token):
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
-    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
 
     if user is not None and account_activation_token.check_token(user, token):
         user.is_active = True
         user.save()
-        return render(request, 'registration/activate_done.html')
+        return render(request, "registration/activate_done.html")
     else:
-        messages.error(request, 'Activation link is invalid!')
+        messages.error(request, "Activation link is invalid!")
 
-    return redirect('index')
+    return redirect("index")
 
 
 def user_login(request):
-    if request.method == 'POST':
+    if request.method == "POST":
         form = LoginForm(request.POST)
         if form.is_valid():
             cd = form.cleaned_data
-            user = authenticate(username=cd['username'], password=cd['password'])
+            user = authenticate(username=cd["username"], password=cd["password"])
             OtpModel.objects.filter(user=user).delete()
             if user is not None:
                 if user.is_active:
                     otp_stuff = OtpModel.objects.create(user=user, otp=otp_provider())
                     send_otp_in_mail(user, otp_stuff)
-                    return redirect(reverse('otp'))
+                    return redirect(reverse("otp"))
                 else:
-                    messages.error(request, 'Disabled account')
+                    messages.error(request, "Disabled account")
             else:
-                messages.error(request, 'Incorrect login or password')
+                messages.error(request, "Incorrect login or password")
         else:
             messages.error(request, form.errors)
-    return render(request, 'registration/login.html')
+    return render(request, "registration/login.html")
 
 
 def send_otp_in_mail(user, otp):
-    subject = 'Otp for signin'
-    message = f'Hi {user.username}, here we sent otp for secure login \n Otp is - {otp.otp}'
+    subject = "Otp for signin"
+    message = (
+        f"Hi {user.username}, here we sent otp for secure login \n Otp is - {otp.otp}"
+    )
     email_from = settings.EMAIL_HOST_USER
-    recipient_list = [user.email, ]
+    recipient_list = [
+        user.email,
+    ]
     send_mail(subject, message, email_from, recipient_list)
 
 
@@ -113,51 +126,64 @@ def otp_provider():
 
 def otp_verify_view(request):
     if request.method == "POST":
-        otp = request.POST.get('otp')
+        otp = request.POST.get("otp")
         verify_otp = OtpModel.objects.filter(otp=otp).first()
         if verify_otp is not None:
-            if timezone.now() - verify_otp.created_at > timedelta(seconds=settings.OTP_TIMEOUT):
+            if timezone.now() - verify_otp.created_at > timedelta(
+                seconds=settings.OTP_TIMEOUT
+            ):
                 messages.error(request, "The otp has expired")
                 verify_otp.delete()
                 verify_otp.save()
-                return redirect(reverse('login'))
+                return redirect(reverse("login"))
 
-            login(request, verify_otp.user, backend='django.contrib.auth.backends.ModelBackend')
+            login(
+                request,
+                verify_otp.user,
+                backend="django.contrib.auth.backends.ModelBackend",
+            )
             verify_otp.delete()
             verify_otp.save()
-            return redirect(reverse('index'))
+            return redirect(reverse("index"))
         else:
             messages.error(request, "Invalid otp!")
-            return redirect(reverse('otp'))
+            return redirect(reverse("otp"))
     else:
-        return render(request, 'registration/otp.html')
+        return render(request, "registration/otp.html")
 
 
 def registration_complete(request, user_id=None):
     if user_id is None:
-        return redirect(reverse('login'))
+        return redirect(reverse("login"))
     user = get_user_model().objects.get(pk=user_id)
     if user.is_active:
-        return redirect(reverse('index'))
+        path = os.path.join(settings.STORAGE_DIRECTORY, user.username)
+        if not os.path.exists(path):
+            os.mkdir(path)
+        return redirect(reverse("index"))
     if request.method == "POST":
         form = UserRegistrationViaForm(request.POST)
         if form.is_valid():
-            user.set_password(request.POST.get('password'))
-            user.username = request.POST.get('username')
-            user.email = request.POST.get('email')
+            user.set_password(request.POST.get("password"))
+            user.username = request.POST.get("username")
+            user.email = request.POST.get("email")
             user.save()
-            activate_email(request, user, form.cleaned_data.get('email'))
-            return render(request, 'registration/register_done.html', {'new_user': user})
+            activate_email(request, user, form.cleaned_data.get("email"))
+            return render(
+                request, "registration/register_done.html", {"new_user": user}
+            )
         else:
             for error in list(form.errors.values()):
                 messages.error(request, error)
-            return redirect(reverse('register'))
+            return redirect(reverse("register"))
 
-    return render(request, 'registration/register_complete.html', {'user': user})
+    return render(request, "registration/register_complete.html", {"user": user})
 
 
 @login_required
 def account(request):
     user = request.user
     vk_linked = UserSocialAuth.objects.filter(user_id=user.id).exists()
-    return render(request, 'Account/account.html', context={'user': user, 'vk_linked': vk_linked})
+    return render(
+        request, "Account/account.html", context={"user": user, "vk_linked": vk_linked}
+    )

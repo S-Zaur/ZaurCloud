@@ -37,25 +37,25 @@ class APITestCase(TestCase):
     @classmethod
     def setUpClass(cls):
         dirs = [
-            settings.STORAGE_DIRECTORY + "/download",
-            settings.STORAGE_DIRECTORY + "/copypaste",
-            settings.STORAGE_DIRECTORY + "/delete",
-            settings.STORAGE_DIRECTORY + "/rename_me",
-            settings.STORAGE_DIRECTORY + "/favorite",
-            settings.STORAGE_DIRECTORY + "/share",
+            settings.STORAGE_DIRECTORY + "/testuser/download",
+            settings.STORAGE_DIRECTORY + "/testuser/copypaste",
+            settings.STORAGE_DIRECTORY + "/testuser/delete",
+            settings.STORAGE_DIRECTORY + "/testuser/rename_me",
+            settings.STORAGE_DIRECTORY + "/testuser/favorite",
+            settings.STORAGE_DIRECTORY + "/testuser/share",
         ]
         files = [
-            settings.STORAGE_DIRECTORY + "/download/readme.txt",
-            settings.STORAGE_DIRECTORY + "/copy.txt",
-            settings.STORAGE_DIRECTORY + "/cut.txt",
-            settings.STORAGE_DIRECTORY + "/delete/delete.txt",
-            settings.STORAGE_DIRECTORY + "/delete/please_dont_delete.txt",
-            settings.STORAGE_DIRECTORY + "/rename_me/rename_me.txt",
-            settings.STORAGE_DIRECTORY + "/favorite/favorite.txt",
-            settings.STORAGE_DIRECTORY + "/share/share.txt",
+            settings.STORAGE_DIRECTORY + "/testuser/download/readme.txt",
+            settings.STORAGE_DIRECTORY + "/testuser/copy.txt",
+            settings.STORAGE_DIRECTORY + "/testuser/cut.txt",
+            settings.STORAGE_DIRECTORY + "/testuser/delete/delete.txt",
+            settings.STORAGE_DIRECTORY + "/testuser/delete/please_dont_delete.txt",
+            settings.STORAGE_DIRECTORY + "/testuser/rename_me/rename_me.txt",
+            settings.STORAGE_DIRECTORY + "/testuser/favorite/favorite.txt",
+            settings.STORAGE_DIRECTORY + "/testuser/share/share.txt",
         ]
         for dir in dirs:
-            os.mkdir(dir)
+            os.makedirs(dir)
         for file in files:
             with open(file, "w") as f:
                 f.write("Create a new text file!")
@@ -116,7 +116,9 @@ class APITestCase(TestCase):
             r = self.client.post("/cloud/upload/", {"url": "", "files": file})
             self.assertEqual(r.status_code, 200)
             self.assertTrue(
-                os.path.exists(os.path.join(settings.STORAGE_DIRECTORY, "file.png"))
+                os.path.exists(
+                    os.path.join(settings.STORAGE_DIRECTORY, "testuser", "file.png")
+                )
             )
             res_json = r.json()
             self.assertEqual(res_json["files"][0]["name"], "file.png")
@@ -160,7 +162,7 @@ class APITestCase(TestCase):
         self.assertEqual(r.status_code, 200)
         self.assertEqual(r.json()["Имя"], "readme.txt")
         self.assertEqual(r.json()["Тип"], 'Файл "TXT"')
-        self.assertEqual(r.json()["Расположение"], "/download")
+        self.assertEqual(r.json()["Расположение"], "download")
         self.assertEqual(r.json()["Размер"], "23.0 B")
 
     def test_copy_paste(self):
@@ -169,9 +171,11 @@ class APITestCase(TestCase):
         r = self.client.post("/cloud/paste/", {"url": "copypaste"})
         self.assertEqual(r.status_code, 200)
         self.assertTrue(
-            os.path.exists(settings.STORAGE_DIRECTORY + "/copypaste/copy.txt")
+            os.path.exists(settings.STORAGE_DIRECTORY + "/testuser/copypaste/copy.txt")
         )
-        self.assertTrue(os.path.exists(settings.STORAGE_DIRECTORY + "/copy.txt"))
+        self.assertTrue(
+            os.path.exists(settings.STORAGE_DIRECTORY + "/testuser/copy.txt")
+        )
         res_json = r.json()
         self.assertEqual(res_json["files"][0]["name"], "copy.txt")
         self.assertEqual(
@@ -185,19 +189,23 @@ class APITestCase(TestCase):
         r = self.client.post("/cloud/paste/", {"url": "copypaste"})
         self.assertEqual(r.status_code, 200)
         self.assertTrue(
-            os.path.exists(settings.STORAGE_DIRECTORY + "/copypaste/cut.txt")
+            os.path.exists(settings.STORAGE_DIRECTORY + "/testuser/copypaste/cut.txt")
         )
-        self.assertFalse(os.path.exists(settings.STORAGE_DIRECTORY + "/cut.txt"))
+        self.assertFalse(
+            os.path.exists(settings.STORAGE_DIRECTORY + "/testuser/cut.txt")
+        )
 
     def test_delete(self):
         r = self.client.post("/cloud/delete/", {"url": "delete/delete.txt"})
         self.assertEqual(r.status_code, 200)
         self.assertFalse(
-            os.path.exists(settings.STORAGE_DIRECTORY + "/delete/delete.txt")
+            os.path.exists(settings.STORAGE_DIRECTORY + "/testuser/delete/delete.txt")
         )
         r = self.client.post("/cloud/delete/", {"url": "delete"})
         self.assertEqual(r.status_code, 200)
-        self.assertFalse(os.path.exists(settings.STORAGE_DIRECTORY + "/delete"))
+        self.assertFalse(
+            os.path.exists(settings.STORAGE_DIRECTORY + "/testuser/delete")
+        )
 
     def test_rename(self):
         r = self.client.post(
@@ -206,18 +214,22 @@ class APITestCase(TestCase):
         )
         self.assertEqual(r.status_code, 200)
         self.assertFalse(
-            os.path.exists(settings.STORAGE_DIRECTORY + "/rename_me/rename_me.txt")
+            os.path.exists(
+                settings.STORAGE_DIRECTORY + "/testuser/rename_me/rename_me.txt"
+            )
         )
         self.assertTrue(
-            os.path.exists(settings.STORAGE_DIRECTORY + "/rename_me/ok.txt")
+            os.path.exists(settings.STORAGE_DIRECTORY + "/testuser/rename_me/ok.txt")
         )
         r = self.client.post(
             "/cloud/rename/",
             {"url": "rename_me", "new-name": "ok"},
         )
         self.assertEqual(r.status_code, 200)
-        self.assertFalse(os.path.exists(settings.STORAGE_DIRECTORY + "/rename_me"))
-        self.assertTrue(os.path.exists(settings.STORAGE_DIRECTORY + "/ok"))
+        self.assertFalse(
+            os.path.exists(settings.STORAGE_DIRECTORY + "/testuser/rename_me")
+        )
+        self.assertTrue(os.path.exists(settings.STORAGE_DIRECTORY + "/testuser/ok"))
 
     def test_rename_400(self):
         r = self.client.post(
@@ -234,7 +246,9 @@ class APITestCase(TestCase):
     def test_create_directory(self):
         r = self.client.post("/cloud/create-directory/", {"url": "", "in-place": True})
         self.assertEqual(r.status_code, 200)
-        self.assertTrue(os.path.exists(settings.STORAGE_DIRECTORY + "/Новая папка"))
+        self.assertTrue(
+            os.path.exists(settings.STORAGE_DIRECTORY + "/testuser/Новая папка")
+        )
         res_json = r.json()
         self.assertEqual(res_json["name"], "Новая папка")
         self.assertEqual(res_json["img"], "/static/Cloud/images/folder.png")

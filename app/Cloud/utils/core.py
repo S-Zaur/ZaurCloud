@@ -26,7 +26,6 @@ def get_files_and_dirs(path):
 def check_permissions(func):
     def wrapper(request, *args, **kwargs):
         path = kwargs["path"] if (len(kwargs) == 1) else ""
-        file_path = os.path.normpath(os.path.join(settings.STORAGE_DIRECTORY, path))
         if not request.user.is_authenticated:
             return render(
                 request,
@@ -38,9 +37,26 @@ def check_permissions(func):
                 },
                 status=401,
             )
+        if not (
+            os.path.exists(
+                os.path.join(settings.STORAGE_DIRECTORY, request.user.username)
+            )
+        ):
+            return render(
+                request,
+                "errors/403.html",
+                context={"user_id": request.user.id},
+                status=403,
+            )
+        file_path = os.path.normpath(
+            os.path.join(settings.STORAGE_DIRECTORY, request.user.username, path)
+        )
         if not os.path.exists(file_path):
             raise Http404
-        if settings.STORAGE_DIRECTORY not in file_path:
+        if (
+            os.path.join(settings.STORAGE_DIRECTORY, request.user.username)
+            not in file_path
+        ):
             raise PermissionDenied
         return func(request, *args, **kwargs)
 
@@ -82,11 +98,13 @@ def get_properties(path):
     properties["Тип"] = (
         f'Файл "{os.path.splitext(path)[1][1:].upper()}"' if is_file else "Папка"
     )
-    properties["Расположение"] = (
+    p = (
         os.path.split(path)[0]
         .replace(settings.STORAGE_DIRECTORY, "")
         .replace("\\", "/")
     )
+    i = p.find("/", 1)
+    properties["Расположение"] = p[i + 1 :] if i != -1 else ""
     properties["Размер"] = convert_size(
         os.path.getsize(path) if is_file else get_dir_size(path)
     )
@@ -113,7 +131,9 @@ def convert_size(size_bytes):
     return f"{s} {size_name[i]}" if i == 0 else f"{s} {size_name[i]} ({size_bytes} B)"
 
 
-def parse_url(url):
+def parse_url(user, url):
     return os.path.normpath(
-        os.path.join(settings.STORAGE_DIRECTORY, urllib.parse.unquote(url))
+        os.path.join(
+            settings.STORAGE_DIRECTORY, user.username, urllib.parse.unquote(url)
+        )
     )

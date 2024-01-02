@@ -1,4 +1,6 @@
+import os
 import uuid
+from django.conf import settings
 from django.test import TestCase
 from django.contrib.auth.models import User
 from Cloud.models import CloudObject, Favorites, Shared
@@ -7,12 +9,24 @@ from Cloud.models import CloudObject, Favorites, Shared
 class ModelsTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
-        o = CloudObject.objects.create(id=101, real_path="/app/Cloud/tests")
-        o2 = CloudObject.objects.create(id=102, real_path="/app/Cloud/templates")
-        CloudObject.objects.create(
-            id=103, real_path="/app/Cloud/static/Cloud/images/file.png"
-        )
-        CloudObject.objects.create(id=104, real_path="/app/Cloud/tests/test_api.py")
+        dirs = [
+            settings.STORAGE_DIRECTORY + "/testuser",
+            settings.STORAGE_DIRECTORY + "/testuser/folder1",
+            settings.STORAGE_DIRECTORY + "/testuser/folder2",
+        ]
+        files = [
+            settings.STORAGE_DIRECTORY + "/testuser/folder1/readme.png",
+            settings.STORAGE_DIRECTORY + "/testuser/folder2/readme.other",
+        ]
+        for dir in dirs:
+            os.makedirs(dir)
+        for file in files:
+            with open(file, "w") as f:
+                f.write("Create a new text file!")
+        o = CloudObject.objects.create(id=101, real_path=dirs[1])
+        o2 = CloudObject.objects.create(id=102, real_path=dirs[2])
+        CloudObject.objects.create(id=103, real_path=files[0])
+        CloudObject.objects.create(id=104, real_path=files[1])
         u = User.objects.create_user(username="testuser", password="12345")
         Favorites.objects.create(id=101, obj=o, user=u)
         s = Shared.objects.create(obj=o, uuid="0074d6ed-cdf6-4d97-85aa-678dcf0197a0")
@@ -46,9 +60,9 @@ class ModelsTestCase(TestCase):
 
     def test_cloud_object_fields(self):
         co = CloudObject.objects.get(id=101)
-        self.assertEqual(co.real_path, "/app/Cloud/tests")
-        self.assertEqual(co.path, "/app/Cloud/tests")
-        self.assertEqual(co.name, "tests")
+        self.assertEqual(co.real_path, "/var/lib/zaurcloud/testuser/folder1")
+        self.assertEqual(co.path, "folder1")
+        self.assertEqual(co.name, "folder1")
         self.assertFalse(co.is_file)
         self.assertEqual(co.ext, "")
         co = CloudObject.objects.get(id=103)
@@ -57,27 +71,27 @@ class ModelsTestCase(TestCase):
 
     def test_cloud_object_to_string(self):
         co = CloudObject.objects.get(id=101)
-        self.assertEqual(str(co), "/app/Cloud/tests")
+        self.assertEqual(str(co), "folder1")
 
     def test_cloud_object_urls(self):
         co = CloudObject.objects.get(id=101)
-        self.assertEqual(co.get_absolute_url(), "/cloud//app/Cloud/tests")
-        self.assertEqual(co.get_rel_url(), "/app/Cloud/tests")
+        self.assertEqual(co.get_absolute_url(), "/cloud/folder1")
+        self.assertEqual(co.get_rel_url(), "folder1")
         co = CloudObject(path="")
         self.assertEqual(co.get_absolute_url(), "/cloud/")
         self.assertEqual(co.get_rel_url(), "")
 
     def test_cloud_object_eq(self):
         co = CloudObject.objects.get(id=101)
-        co2 = CloudObject(real_path="/app/Cloud/tests")
+        co2 = CloudObject(real_path=settings.STORAGE_DIRECTORY + "/testuser/folder1")
         co3 = CloudObject.objects.get(id=102)
         self.assertEqual(co, co2)
         self.assertNotEqual(co, co3)
 
     def test_cloud_object_lt(self):
         objs = CloudObject.objects.filter(id__gt=100)
-        self.assertFalse(objs[0] < objs[1])
-        self.assertTrue(objs[2] < objs[3])
+        self.assertTrue(objs[0] < objs[1])
+        self.assertFalse(objs[2] < objs[3])
         self.assertTrue(objs[0] < objs[2])
         self.assertFalse(objs[3] < objs[1])
 
